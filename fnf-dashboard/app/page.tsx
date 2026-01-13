@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { KPICard } from '@/components/dashboard/KPICard';
 import { InsightCard } from '@/components/dashboard/InsightCard';
 import { RatioCard } from '@/components/dashboard/RatioCard';
-import type { KPIData } from '@/types/financial';
 
 // 재무 데이터 (CSV 파일 기준: F&F 월별재무제표(25.12).csv)
 // 단위: 억원 (백만원 ÷ 100)
@@ -34,10 +33,6 @@ const financialData = {
 };
 
 export default function DashboardPage() {
-  const [kpiData, setKpiData] = useState<KPIData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   // 계산된 지표들
   const calculatedMetrics = useMemo(() => {
     const d = financialData;
@@ -174,53 +169,8 @@ export default function DashboardPage() {
     };
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch('/api/kpi?year=2025');
-        const json = await res.json();
-        if (json.success) {
-          setKpiData(json.data.kpi);
-        } else {
-          setError(json.error || 'Failed to fetch data');
-        }
-      } catch (err) {
-        setError('Failed to fetch KPI data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
   const formatNumber = (num: number) => num.toLocaleString('ko-KR');
   const formatPercent = (num: number) => num.toFixed(1);
-
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="grid grid-cols-5 gap-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-          {error}
-        </div>
-      </div>
-    );
-  }
 
   const d = financialData;
   const m = calculatedMetrics;
