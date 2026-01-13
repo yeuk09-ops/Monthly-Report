@@ -587,9 +587,9 @@ export default function BalanceSheetPage() {
           <p className="text-sm text-emerald-600">전년 {((totalLiabilities.dec24 / totalEquity.dec24) * 100).toFixed(1)}% → △{(((totalLiabilities.dec24 / totalEquity.dec24) * 100) - ((totalLiabilities.dec25 / totalEquity.dec25) * 100)).toFixed(1)}%p 개선</p>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border-l-4 border-emerald-500">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">유동비율</h3>
-          <p className="text-2xl font-bold text-[#1e3c72]">245.2%</p>
-          <p className="text-sm text-emerald-600">전년 160.6% → +84.6%p 개선</p>
+          <h3 className="text-sm font-medium text-gray-500 mb-1">자기자본비율</h3>
+          <p className="text-2xl font-bold text-[#1e3c72]">{((totalEquity.dec25 / totalAssets.dec25) * 100).toFixed(1)}%</p>
+          <p className="text-sm text-emerald-600">전년 {((totalEquity.dec24 / totalAssets.dec24) * 100).toFixed(1)}% → +{(((totalEquity.dec25 / totalAssets.dec25) * 100) - ((totalEquity.dec24 / totalAssets.dec24) * 100)).toFixed(1)}%p 개선</p>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border-l-4 border-orange-500">
           <h3 className="text-sm font-medium text-gray-500 mb-1">순차입금비율</h3>
@@ -606,9 +606,8 @@ export default function BalanceSheetPage() {
             <h4 className="font-semibold text-gray-800 mb-2">안정성 지표</h4>
             <ul className="space-y-1">
               <li>• 부채비율 = 총부채 ÷ 자기자본 × 100</li>
-              <li>• 유동비율 = 유동자산 ÷ 유동부채 × 100</li>
-              <li>• 순차입금비율 = (차입금-현금) ÷ 자기자본 × 100</li>
               <li>• 자기자본비율 = 자기자본 ÷ 총자산 × 100</li>
+              <li>• 순차입금비율 = (차입금-현금) ÷ 자기자본 × 100</li>
             </ul>
           </div>
           <div>

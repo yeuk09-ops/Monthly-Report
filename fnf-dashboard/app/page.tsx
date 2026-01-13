@@ -64,10 +64,6 @@ export default function DashboardPage() {
       current: (d.totalLiabilities.current / d.equity.current * 100),
       previous: (d.totalLiabilities.previous / d.equity.previous * 100)
     };
-    const currentRatio = {
-      current: (d.currentAssets.current / d.currentLiabilities.current * 100),
-      previous: (d.currentAssets.previous / d.currentLiabilities.previous * 100)
-    };
     const netDebt = {
       current: d.borrowings.current - d.cash.current,
       previous: d.borrowings.previous - d.cash.previous
@@ -154,7 +150,6 @@ export default function DashboardPage() {
 
       // 안정성
       debtRatio,
-      currentRatio,
       netDebtRatio,
       equityRatio,
 
@@ -303,7 +298,7 @@ export default function DashboardPage() {
       {/* 안정성 지표 */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-blue-500">
         <h3 className="text-lg font-semibold text-blue-800 mb-4">🛡️ 안정성 지표</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <RatioCard
             label="부채비율"
             value={m.debtRatio.current}
@@ -311,20 +306,15 @@ export default function DashboardPage() {
             positiveGood={false}
           />
           <RatioCard
-            label="유동비율"
-            value={m.currentRatio.current}
-            previousValue={m.currentRatio.previous}
+            label="자기자본비율"
+            value={m.equityRatio.current}
+            previousValue={m.equityRatio.previous}
           />
           <RatioCard
             label="순차입금비율"
             value={m.netDebtRatio.current}
             previousValue={m.netDebtRatio.previous}
             positiveGood={false}
-          />
-          <RatioCard
-            label="자기자본비율"
-            value={m.equityRatio.current}
-            previousValue={m.equityRatio.previous}
           />
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-500 mb-1">차입금</div>
@@ -421,9 +411,8 @@ export default function DashboardPage() {
             <h4 className="font-semibold text-gray-800 mb-2">안정성 지표</h4>
             <ul className="space-y-1">
               <li>• 부채비율 = 총부채 ÷ 자기자본 × 100</li>
-              <li>• 유동비율 = 유동자산 ÷ 유동부채 × 100</li>
-              <li>• 순차입금비율 = (차입금-현금) ÷ 자기자본 × 100</li>
               <li>• 자기자본비율 = 자기자본 ÷ 총자산 × 100</li>
+              <li>• 순차입금비율 = (차입금-현금) ÷ 자기자본 × 100</li>
             </ul>
           </div>
           <div>
