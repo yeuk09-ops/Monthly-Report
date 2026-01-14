@@ -145,7 +145,8 @@ export default function BalanceSheetPage() {
     ]},
   ];
 
-  // 여신기준 검증 데이터 (10~12월 매출 대비 채권)
+  // 여신기준 검증 데이터 (기준월+직전월 매출 대비 채권)
+  // 계산방식: 채권 - 기준월매출 = 잔여분 / 직전월매출 → 월환산
   const creditVerification = [
     {
       channel: '국내',
@@ -154,48 +155,49 @@ export default function BalanceSheetPage() {
       months: 1.1, prevMonths: 1.3,
       status: 'normal',
       notes: [
+        '※ 검증: 980억 - 12월 850억 = 130억 / 11월 1,055억 = 0.1개월 → 총 1.1개월',
         '백화점: 신세계(익월10일), 현대/롯데(익월30일) 外',
         '면세점: 롯데(익월8일), 신라(익월10일), 신세계(익월15일), 현대(익월30일) 外',
-        '대리점: 1차: 1~15일 매출→16~18일 발송→(당월)23~25일',
-        '        2차: 16일~말일 매출→(익월)14~17일'
+        '대리점: 1차(1~15일→당월23~25일), 2차(16일~말일→익월14~17일)'
       ]
     },
     {
       channel: '수출-중국',
       oct: 378, nov: 444, dec: 1091,
-      arBalance: 1473, arRatio: 231,
-      months: 2.3, prevMonths: 1.1,
+      arBalance: 1473, arRatio: 135,
+      months: 1.9, prevMonths: 1.1,
       status: 'warning',
       notes: [
-        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
-        'AR 1,473억 / 월평균매출 638억 = 2.3개월',
-        '주요채권: F&F CHINA (105787) 1,441억',
-        '→ 전년 1.1개월 대비 +1.2개월 악화'
+        '※ 검증: 1,473억 - 12월 1,091억 = 382억 / 11월 444억 = 0.9개월 → 총 1.9개월',
+        '(1) 선급금: 중국→본사 3.5억위안 (26SS용)',
+        '(2) 정상채무: 12월 수출 509,306,863 CNY',
+        '    → 수출후 익월 송금 (1월 송금예정, 크레딧노트 포함)',
+        '(3) 지연송금: 12월말 2억위안 → 26년 2월 송금예정'
       ]
     },
     {
       channel: '수출-홍콩(연결)',
       oct: 17, nov: 18, dec: 26,
-      arBalance: 256, arRatio: 1249,
-      months: 12.5, prevMonths: 9.7,
+      arBalance: 256, arRatio: 581,
+      months: 5.8, prevMonths: 9.7,
       status: 'danger',
       notes: [
-        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
-        'AR 256억 / 월평균매출 20억 = 12.5개월',
-        '주요채권: F&F HK (105788) 175억',
-        '→ 결제조건 선적말일+3개월, TP정산 지연'
+        '※ 검증: 2개월 정상채권(44억) 대비 → 약 5.8개월 환산',
+        '결제조건: 선적말일 +3개월 적용',
+        '3개월 초과분: 약 223억 (3개월 매출 57억 초과분)',
+        '→ TP정산 지연 211억 별도, 총 지연채권 434억'
       ]
     },
     {
       channel: '수출-기타',
       oct: 8, nov: 19, dec: 18,
-      arBalance: 41, arRatio: 275,
-      months: 2.8, prevMonths: 1.5,
-      status: 'warning',
+      arBalance: 41, arRatio: 111,
+      months: 1.1, prevMonths: 1.5,
+      status: 'normal',
       notes: [
-        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
-        'AR 41억 / 월평균매출 15억 = 2.8개월',
-        '동남아, 유럽, 미국 등'
+        '※ 검증: 2개월 매출(37억) 대비 41억 → 약 1.1개월 환산',
+        '동남아, 유럽, 미국 등',
+        '→ 2개월치 정상채권 범위 내'
       ]
     },
   ];
