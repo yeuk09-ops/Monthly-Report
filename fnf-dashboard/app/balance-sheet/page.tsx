@@ -162,28 +162,28 @@ export default function BalanceSheetPage() {
     },
     {
       channel: '수출-중국',
-      oct: 378, nov: 444, dec: 520,
-      arBalance: 850, arRatio: 53,
-      months: 1.9, prevMonths: 1.1,
-      status: 'warning',
+      oct: 378, nov: 444, dec: 1091,
+      arBalance: 8316, arRatio: 1304,
+      months: 13.0, prevMonths: 1.1,
+      status: 'danger',
       notes: [
-        '(1) 선급금: 중국→본사 3.5억위안 (26SS용)',
-        '(2) 정상채무: 12월 수출분',
-        '    → 수출후 익월에 송금 (1월 송금예정)',
-        '(3) 지연송금: 12월말 2억위안',
-        '    → 26년 2월 1억, 3월 1억 송금예정'
+        '※ Snowflake 검증 (DW_COPA_D, DM_F_FI_AR_AGING)',
+        'AR 8,316억 / 월평균매출 638억 = 13.0개월',
+        '주요채권: F&F CHINA CO.,LTD (105787) 7,655억',
+        '→ TP정산 및 지연송금 포함'
       ]
     },
     {
       channel: '수출-홍콩(연결)',
-      oct: 17, nov: 18, dec: 22,
-      arBalance: 280, arRatio: 490,
-      months: 14.7, prevMonths: 15.9,
+      oct: 17, nov: 18, dec: 26,
+      arBalance: 293, arRatio: 1437,
+      months: 14.4, prevMonths: 15.9,
       status: 'danger',
       notes: [
+        '※ Snowflake 검증 (DW_COPA_D, DM_F_FI_AR_AGING)',
+        'AR 293억 / 월평균매출 20억 = 14.4개월',
         '결제조건: 선적말일 +3개월 적용',
-        '3개월 초과분: 약 223억 (3개월 매출 57억 초과분)',
-        '→ TP정산(211억) 지연 별도, 총 지연채권 434억'
+        '→ TP정산 지연 포함'
       ]
     },
     {
@@ -571,9 +571,9 @@ export default function BalanceSheetPage() {
               <p className="text-sm">• 수출-기타: 1.3개월 (전년 1.7개월 대비 개선)</p>
             </div>
             <div>
-              <strong className="text-red-700">🔴 조치 필요:</strong>
-              <p className="text-sm mt-1">• 홍콩(연결): 3개월 매출 초과 223억 - TP정산 지연 (14.7개월)</p>
-              <p className="text-sm">• 중국: 1.9개월 (+0.8개월 악화), 지연송금 2억위안</p>
+              <strong className="text-red-700">🔴 조치 필요 (Snowflake 검증):</strong>
+              <p className="text-sm mt-1">• 중국: AR 8,316억 / 월평균 638억 = <strong>13.0개월</strong></p>
+              <p className="text-sm">• 홍콩: AR 293억 / 월평균 20억 = <strong>14.4개월</strong></p>
             </div>
           </div>
         </div>
