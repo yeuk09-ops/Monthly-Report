@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface BalanceSheetItem {
@@ -408,9 +408,13 @@ export default function BalanceSheetPage() {
               <td className="px-4 py-3 text-right font-semibold">+2.2%</td>
             </tr>
             {expandedSections.invDetail && workingCapitalInv.map((brand, idx) => (
-              <div key={`brand-wrapper-${idx}`}>
+              <React.Fragment key={`brand-wrapper-${idx}`}>
                 <tr key={`brand-${idx}`} className="bg-blue-50">
-                  <td colSpan={5} className="px-4 py-2 pl-8 font-semibold text-blue-700">{brand.label}</td>
+                  <td className="px-4 py-2 pl-8 font-semibold text-blue-700">{brand.label}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2"></td>
                 </tr>
                 {brand.subItems.map((item, subIdx) => (
                   <tr key={`item-${idx}-${subIdx}`} className="border-b border-gray-100 hover:bg-gray-50">
@@ -425,7 +429,7 @@ export default function BalanceSheetPage() {
                     </td>
                   </tr>
                 ))}
-              </div>
+              </React.Fragment>
             ))}
 
             {/* 매입채무 */}
