@@ -178,14 +178,14 @@ export default function BalanceSheetPage() {
     {
       channel: '수출-홍콩(연결)',
       oct: 17, nov: 18, dec: 26,
-      arBalance: 256, arRatio: 581,
-      months: 5.8, prevMonths: 9.7,
+      arBalance: 256, arRatio: 420,
+      months: 4.2, prevMonths: 9.7,
       status: 'danger',
       notes: [
-        '※ 검증: 2개월 정상채권(44억) 대비 → 약 5.8개월 환산',
+        '※ 검증: 3개월 정상채권(61억) 대비 256억 → 약 4.2개월 환산',
         '결제조건: 선적말일 +3개월 적용',
-        '3개월 초과분: 약 223억 (3개월 매출 57억 초과분)',
-        '→ TP정산 지연 211억 별도, 총 지연채권 434억'
+        '3개월 초과분: 195억 (256억 - 3개월 매출 61억)',
+        '→ TP정산 지연 211억 별도, 총 지연채권 406억'
       ]
     },
     {
