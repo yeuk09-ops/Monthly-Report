@@ -101,11 +101,11 @@
   "workingCapital": {
     "ar": [
       { "label": "국내", "dec24": 1021, "dec25": 1015, "change": -6, "changePercent": -0.6 },
-      { "label": "수출-중국", "dec24": 426, "dec25": 1036, "change": 610, "changePercent": 143.2, "warning": true, "note": "결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이" },
-      { "label": "수출-홍콩(연결)", "dec24": 205, "dec25": 282, "change": 77, "changePercent": 37.6, "warning": true },
+      { "label": "수출-중국", "dec24": 426, "dec25": 1036, "change": 610, "changePercent": 143.2, "warning": true, "note": "여신검증 기준 (선수금 상계 전)" },
+      { "label": "수출-홍콩(연결)", "dec24": 223, "dec25": 259, "change": 36, "changePercent": 16.1, "warning": true },
       { "label": "수출-기타", "dec24": 55, "dec25": 40, "change": -15, "changePercent": -27.3 }
     ],
-    "arNote": "중국채권: 결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이",
+    "arNote": "여신검증 기준 AR 잔액. 중국은 선수금 상계 전 금액",
     "inventory": [
       {
         "brand": "MLB",
@@ -162,13 +162,14 @@
     {
       "channel": "수출-홍콩(연결)",
       "sep": 32, "oct": 17, "nov": 18,
-      "arBalance": 282, "arRatio": 421,
-      "months": 4.2, "prevMonths": 3.5,
-      "status": "warning",
+      "arBalance": 259, "arRatio": 386,
+      "months": 11.6, "prevMonths": 9.7,
+      "status": "danger",
       "notes": [
         "결제조건: 선적말일 +3개월 적용 (정상채권 3개월)",
         "3개월 매출: 67억 (9~11월 합계)",
-        "3개월 초과분: 215억 (282억 - 67억) → 지연채권"
+        "3개월 초과분: 192억 (259억 - 67억) → 지연채권",
+        "TP정산 지연 약 200억 별도"
       ]
     },
     {
@@ -196,7 +197,7 @@
       "<strong>중국 채권 급증</strong>: +143.2% (426억→1,036억), 2.3개월 수준으로 증가",
       "<strong>국내 매출 역성장</strong>: -8.2% (8,413억→7,723억), 전 채널 감소 추세",
       "<strong>수출 기타 지역 급감</strong>: -80.2% (1,892억→374억), 브라질 등 중단",
-      "<strong>홍콩 채권 장기화</strong>: AR 282억 중 215억 3개월 초과 (4.2개월), 지연채권 관리 필요",
+      "<strong>홍콩 채권 장기화</strong>: AR 259억 중 192억 3개월 초과 (11.6개월), TP정산 지연 200억 별도",
       "<strong>Discovery 매출 감소</strong>: -16.9% (4,000억→3,324억), 국내 부진 지속"
     ]
   }

@@ -100,12 +100,12 @@
   },
   "workingCapital": {
     "ar": [
-      { "label": "국내", "dec24": 1020, "dec25": 980, "change": -40, "changePercent": -3.9 },
-      { "label": "수출-중국", "dec24": 81, "dec25": 850, "change": 769, "changePercent": 949.4, "warning": true, "note": "결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이" },
-      { "label": "수출-홍콩(연결)", "dec24": 168, "dec25": 280, "change": 112, "changePercent": 66.7, "warning": true },
-      { "label": "수출-기타", "dec24": 55, "dec25": 70, "change": 15, "changePercent": 27.3 }
+      { "label": "국내", "dec24": 1020, "dec25": 987, "change": -33, "changePercent": -3.2 },
+      { "label": "수출-중국", "dec24": 81, "dec25": 896, "change": 815, "changePercent": 1006.2, "warning": true, "note": "결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이 (상계전 1,473억)" },
+      { "label": "수출-홍콩(연결)", "dec24": 168, "dec25": 256, "change": 88, "changePercent": 52.4, "warning": true },
+      { "label": "수출-기타", "dec24": 55, "dec25": 41, "change": -14, "changePercent": -25.5 }
     ],
-    "arNote": "중국채권: 결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이",
+    "arNote": "중국채권: 결산시 선수금과 상계 (577억). 외환차손익 반영 효과 등으로 인한 차이",
     "inventory": [
       {
         "brand": "MLB",
@@ -137,7 +137,7 @@
     {
       "channel": "국내",
       "oct": 867, "nov": 1159, "dec": 1101,
-      "arBalance": 980, "arRatio": 89,
+      "arBalance": 987, "arRatio": 90,
       "months": 0.9, "prevMonths": 1.0,
       "status": "normal",
       "notes": [
@@ -157,31 +157,32 @@
         "(2) 정상채무: 12월 수출 1,091억 (정상 1개월)",
         "    → 수출후 익월 송금 (1월 송금예정, 크레딧노트 포함)",
         "(3) 초과채권: 382억 (1,473억 - 12월 1,091억) → 26년 2월 송금예정",
-        "※ 재무제표 기준 850억 (선수금 상계 후)"
+        "※ 재무제표 기준 896억 (선수금 577억 상계 후)"
       ]
     },
     {
       "channel": "수출-홍콩(연결)",
       "oct": 17, "nov": 18, "dec": 26,
-      "arBalance": 280, "arRatio": 459,
-      "months": 4.6, "prevMonths": 3.5,
-      "status": "warning",
+      "arBalance": 256, "arRatio": 1248,
+      "months": 12.5, "prevMonths": 11.6,
+      "status": "danger",
       "notes": [
         "결제조건: 선적말일 +3개월 적용 (정상채권 3개월)",
         "3개월 매출: 61억 (10~12월 합계)",
-        "3개월 초과분: 219억 (280억 - 61억) → 지연채권"
+        "3개월 초과분: 195억 (256억 - 61억) → 지연채권",
+        "TP정산 지연 별도 발생"
       ]
     },
     {
       "channel": "수출-기타",
       "oct": 8, "nov": 19, "dec": 18,
-      "arBalance": 70, "arRatio": 189,
-      "months": 1.9, "prevMonths": 1.5,
-      "status": "normal",
+      "arBalance": 41, "arRatio": 222,
+      "months": 2.8, "prevMonths": 1.5,
+      "status": "warning",
       "notes": [
         "동남아, 유럽, 미국 등 (정상채권 2개월)",
         "2개월 매출: 37억 (11~12월 합계)",
-        "정상 범위 내"
+        "2개월 초과분: 4억 (41억 - 37억) → 지연채권"
       ]
     }
   ],
