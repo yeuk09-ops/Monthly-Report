@@ -27,7 +27,7 @@
   },
   "incomeStatement": {
     "revenue": [
-      { "label": "실판매출", "current": 15584, "previous": 14084, "change": 1500, "changePercent": 10.7 },
+      { "label": "실판매출(V-)", "current": 15584, "previous": 14084, "change": 1500, "changePercent": 10.7 },
       { "label": "- 국내매출", "current": 7723, "previous": 8413, "change": -690, "changePercent": -8.2 },
       { "label": "- 수출매출", "current": 7861, "previous": 5671, "change": 2190, "changePercent": 38.6 }
     ],

@@ -164,7 +164,7 @@ export default function DashboardPage() {
           <div className="h-1 bg-blue-500" />
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-slate-500 font-medium">실판매출 (1~{month}월)</p>
+              <p className="text-xs text-slate-500 font-medium">실판매출(V-) (1~{month}월)</p>
               <DollarSign className="w-4 h-4 text-slate-400" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{(d.revenue.current / 10000).toFixed(2)}조</p>
@@ -243,7 +243,7 @@ export default function DashboardPage() {
               <ul className="space-y-1.5 ml-1">
                 <li className="flex items-start gap-2">
                   <span className="text-slate-400">•</span>
-                  <span>실판매출 {formatNumber(d.revenue.previous)}억 → {formatNumber(d.revenue.current)}억 <span className="text-emerald-500 font-medium">(+{formatPercent(m.revenueGrowth)}%)</span></span>
+                  <span>실판매출(V-) {formatNumber(d.revenue.previous)}억 → {formatNumber(d.revenue.current)}억 <span className="text-emerald-500 font-medium">(+{formatPercent(m.revenueGrowth)}%)</span></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-slate-400">•</span>
