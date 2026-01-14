@@ -1,0 +1,24 @@
+{
+  "availableMonths": [
+    {
+      "year": 2025,
+      "month": 12,
+      "label": "2025년 12월",
+      "file": "2025-12.json",
+      "status": "published",
+      "updatedAt": "2026-01-14"
+    },
+    {
+      "year": 2025,
+      "month": 11,
+      "label": "2025년 11월",
+      "file": "2025-11.json",
+      "status": "published",
+      "updatedAt": "2026-01-14"
+    }
+  ],
+  "defaultMonth": {
+    "year": 2025,
+    "month": 12
+  }
+}

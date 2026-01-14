@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "year": 2025,
+    "month": 12,
+    "reportDate": "2025-12-31",
+    "updatedAt": "2026-01-14",
+    "status": "published"
+  },
+  "financialData": {
+    "revenue": { "current": 17820, "previous": 15968 },
+    "domesticRevenue": { "current": 8824, "previous": 9587 },
+    "exportRevenue": { "current": 8996, "previous": 6381 },
+    "cogs": { "current": 6129, "previous": 5270 },
+    "sga": { "current": 5878, "previous": 5680 },
+    "operatingProfit": { "current": 5813, "previous": 5018 },
+    "totalAssets": { "current": 22448, "previous": 19248 },
+    "currentAssets": { "current": 9638, "previous": 5806 },
+    "cash": { "current": 2708, "previous": 615 },
+    "receivables": { "current": 2180, "previous": 1324 },
+    "inventory": { "current": 2303, "previous": 2253 },
+    "totalLiabilities": { "current": 4144, "previous": 4309 },
+    "currentLiabilities": { "current": 2399, "previous": 3611 },
+    "borrowings": { "current": 0, "previous": 450 },
+    "payables": { "current": 862, "previous": 798 },
+    "equity": { "current": 18304, "previous": 14939 },
+    "retainedEarnings": { "current": 15657, "previous": 12227 }
+  },
+  "incomeStatement": {
+    "revenue": [
+      { "label": "실판매출", "current": 17820, "previous": 15968, "change": 1852, "changePercent": 11.6 },
+      { "label": "- 국내매출", "current": 8824, "previous": 9587, "change": -763, "changePercent": -8.0 },
+      { "label": "- 수출매출", "current": 8996, "previous": 6381, "change": 2615, "changePercent": 41.0 }
+    ],
+    "costs": [
+      { "label": "매출원가", "current": 6129, "previous": 5270, "change": 859, "changePercent": 16.3 },
+      { "label": "판매비와관리비", "current": 5878, "previous": 5680, "change": 198, "changePercent": 3.5 },
+      { "label": "- 인건비", "current": 1880, "previous": 1810, "change": 70, "changePercent": 3.9 },
+      { "label": "- 광고선전비", "current": 1300, "previous": 1240, "change": 60, "changePercent": 4.8 },
+      { "label": "- 물류비", "current": 950, "previous": 880, "change": 70, "changePercent": 8.0 },
+      { "label": "- 기타판관비", "current": 1748, "previous": 1750, "change": -2, "changePercent": -0.1 }
+    ],
+    "operatingProfit": { "label": "영업이익", "current": 5813, "previous": 5018, "change": 795, "changePercent": 15.8 }
+  },
+  "channelSales": [
+    { "channel": "백화점", "current": 2339, "previous": 2567, "yoy": -8.9 },
+    { "channel": "대리점", "current": 370, "previous": 262, "yoy": 41.2 },
+    { "channel": "면세점", "current": 1472, "previous": 1663, "yoy": -11.5 },
+    { "channel": "직영점", "current": 796, "previous": 720, "yoy": 10.6 },
+    { "channel": "할인점", "current": 358, "previous": 399, "yoy": -10.3 },
+    { "channel": "아울렛", "current": 1873, "previous": 2163, "yoy": -13.4 },
+    { "channel": "온라인(자사몰)", "current": 881, "previous": 970, "yoy": -9.2 },
+    { "channel": "온라인(입점몰)", "current": 210, "previous": 239, "yoy": -12.1 },
+    { "channel": "사입", "current": 491, "previous": 568, "yoy": -13.6 },
+    { "channel": "기타", "current": 32, "previous": 36, "yoy": -11.1 }
+  ],
+  "exportSales": [
+    { "region": "중국", "current": 8314, "previous": 4186, "yoy": 98.6 },
+    { "region": "홍콩/마카오", "current": 291, "previous": 282, "yoy": 3.2 },
+    { "region": "기타", "current": 391, "previous": 1914, "yoy": -79.6 }
+  ],
+  "brandSales": [
+    { "brand": "MLB", "code": "M", "current": 3660, "previous": 3775, "yoy": -3.0, "currentRatio": 41.5, "prevRatio": 39.4 },
+    { "brand": "Discovery", "code": "X", "current": 3946, "previous": 4755, "yoy": -17.0, "currentRatio": 44.7, "prevRatio": 49.6 },
+    { "brand": "MLB Kids", "code": "I", "current": 822, "previous": 827, "yoy": -0.6, "currentRatio": 9.3, "prevRatio": 8.6 },
+    { "brand": "Duvetica", "code": "V", "current": 303, "previous": 160, "yoy": 89.4, "currentRatio": 3.4, "prevRatio": 1.7 },
+    { "brand": "기타", "code": "ETC", "current": 93, "previous": 69, "yoy": 34.8, "currentRatio": 1.1, "prevRatio": 0.7 }
+  ],
+  "balanceSheet": {
+    "assets": [
+      { "label": "현금및현금성자산", "dec24": 615, "dec25": 2708, "change": 2093, "changePercent": 340.3, "isAlwaysVisible": true },
+      { "label": "매출채권", "dec24": 1324, "dec25": 2180, "change": 856, "changePercent": 64.7, "isAlwaysVisible": true, "highlight": true },
+      { "label": "재고자산", "dec24": 2253, "dec25": 2303, "change": 50, "changePercent": 2.2, "isAlwaysVisible": true },
+      { "label": "(재고자산 평가충당금)", "dec24": -110, "dec25": -137, "change": -27, "changePercent": 24.5, "isSubItem": true },
+      { "label": "투자자산", "dec24": 6760, "dec25": 6715, "change": -45, "changePercent": -0.7, "isSubItem": true },
+      { "label": "유무형자산", "dec24": 6098, "dec25": 6013, "change": -85, "changePercent": -1.4, "isSubItem": true },
+      { "label": "사용권자산", "dec24": 1476, "dec25": 1325, "change": -151, "changePercent": -10.2, "isSubItem": true },
+      { "label": "기타채권", "dec24": 523, "dec25": 1000, "change": 477, "changePercent": 91.2, "isSubItem": true },
+      { "label": "기타자산", "dec24": 310, "dec25": 341, "change": 31, "changePercent": 10.0, "isSubItem": true }
+    ],
+    "liabilities": [
+      { "label": "매입채무", "dec24": 798, "dec25": 862, "change": 64, "changePercent": 8.0, "isAlwaysVisible": true },
+      { "label": "미지급금", "dec24": 361, "dec25": 553, "change": 192, "changePercent": 53.2, "isSubItem": true },
+      { "label": "차입금", "dec24": 450, "dec25": 0, "change": -450, "changePercent": -100, "isAlwaysVisible": true },
+      { "label": "법인세부채", "dec24": 675, "dec25": 932, "change": 257, "changePercent": 38.1, "isSubItem": true },
+      { "label": "리스부채", "dec24": 1528, "dec25": 1406, "change": -122, "changePercent": -8.0, "isSubItem": true },
+      { "label": "퇴직급여/충당부채", "dec24": 80, "dec25": 55, "change": -25, "changePercent": -31.3, "isSubItem": true },
+      { "label": "기타부채", "dec24": 418, "dec25": 336, "change": -82, "changePercent": -19.6, "isSubItem": true }
+    ],
+    "equity": [
+      { "label": "자본금", "dec24": 38, "dec25": 38, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "자본잉여금", "dec24": 3199, "dec25": 3199, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "이익잉여금", "dec24": 12227, "dec25": 15657, "change": 3430, "changePercent": 28.1, "isAlwaysVisible": true },
+      { "label": "자기주식", "dec24": -525, "dec25": -590, "change": -65, "changePercent": 12.4, "isSubItem": true }
+    ],
+    "totals": {
+      "assets": { "dec24": 19248, "dec25": 22448 },
+      "liabilities": { "dec24": 4309, "dec25": 4144 },
+      "equity": { "dec24": 14939, "dec25": 18304 }
+    }
+  },
+  "workingCapital": {
+    "ar": [
+      { "label": "국내", "dec24": 1039, "dec25": 987, "change": -52, "changePercent": -5.0 },
+      { "label": "수출-중국", "dec24": 426, "dec25": 1473, "change": 1047, "changePercent": 245.8, "warning": true },
+      { "label": "수출-홍콩(연결)", "dec24": 223, "dec25": 256, "change": 33, "changePercent": 14.8, "warning": true },
+      { "label": "수출-기타", "dec24": 55, "dec25": 41, "change": -14, "changePercent": -25.5 }
+    ],
+    "inventory": [
+      {
+        "brand": "MLB",
+        "items": [
+          { "label": "의류-당시즌", "dec24": 78, "dec25": 88, "change": 10, "changePercent": 13.0 },
+          { "label": "의류-과시즌", "dec24": 157, "dec25": 114, "change": -43, "changePercent": -27.3 }
+        ]
+      },
+      {
+        "brand": "Discovery",
+        "items": [
+          { "label": "의류-당시즌", "dec24": 375, "dec25": 480, "change": 105, "changePercent": 28.2 },
+          { "label": "의류-과시즌", "dec24": 478, "dec25": 456, "change": -22, "changePercent": -4.4 }
+        ]
+      }
+    ]
+  },
+  "creditVerification": [
+    {
+      "channel": "국내",
+      "oct": 867, "nov": 1159, "dec": 1101,
+      "arBalance": 987, "arRatio": 90,
+      "months": 0.9, "prevMonths": 1.0,
+      "status": "normal",
+      "notes": [
+        "백화점: 신세계(익월10일), 현대/롯데(익월30일) 外",
+        "면세점: 롯데(익월8일), 신라(익월10일), 신세계(익월15일), 현대(익월30일) 外",
+        "대리점: 1차(1~15일→당월23~25일), 2차(16일~말일→익월14~17일)"
+      ]
+    },
+    {
+      "channel": "수출-중국",
+      "oct": 378, "nov": 444, "dec": 1091,
+      "arBalance": 1473, "arRatio": 135,
+      "months": 2.3, "prevMonths": 1.1,
+      "status": "warning",
+      "notes": [
+        "(1) 선급금: 중국→본사 3.5억위안 (26SS용)",
+        "(2) 정상채무: 12월 수출 1,091억 (정상 1개월)",
+        "    → 수출후 익월 송금 (1월 송금예정, 크레딧노트 포함)",
+        "(3) 초과채권: 382억 (1,473억 - 12월 1,091억) → 26년 2월 송금예정"
+      ]
+    },
+    {
+      "channel": "수출-홍콩(연결)",
+      "oct": 17, "nov": 18, "dec": 26,
+      "arBalance": 256, "arRatio": 1248,
+      "months": 12.5, "prevMonths": 11.6,
+      "status": "danger",
+      "notes": [
+        "결제조건: 선적말일 +3개월 적용 (정상채권 3개월)",
+        "3개월 매출: 61억 (10~12월 합계)",
+        "3개월 초과분: 195억 (256억 - 61억) → 지연채권",
+        "TP정산 지연 별도 발생"
+      ]
+    },
+    {
+      "channel": "수출-기타",
+      "oct": 8, "nov": 19, "dec": 18,
+      "arBalance": 41, "arRatio": 222,
+      "months": 2.8, "prevMonths": 1.5,
+      "status": "warning",
+      "notes": [
+        "동남아, 유럽, 미국 등 (정상채권 2개월)",
+        "2개월 매출: 37억 (11~12월 합계)",
+        "2개월 초과분: 4억 (41억 - 37억) → 지연채권"
+      ]
+    }
+  ],
+  "aiInsights": {
+    "positive": [
+      "<strong>무차입 경영 유지</strong>: 차입금 0원, 순차입금비율 -14.8%로 재무안정성 최고 수준",
+      "<strong>영업이익률 32.6%</strong>: 5,813억원 영업이익 달성 (1~12월 누계), 전년대비 +15.9%",
+      "<strong>현금 2,708억원</strong>: 전년대비 +2,093억원(+340%) 대폭 증가",
+      "<strong>수출 매출 고성장</strong>: +41.0% 증가 (6,381억→8,996억), 수출비중 50.5%",
+      "<strong>중국 매출 2배 성장</strong>: +98.6% (4,186억→8,314억), 전체 매출 견인"
+    ],
+    "warning": [
+      "<strong>중국 채권 급증</strong>: +245.8% (426억→1,473억), 2.3개월 수준으로 증가",
+      "<strong>국내 매출 역성장</strong>: -8.0% (9,587억→8,824억), 전 채널 감소 추세",
+      "<strong>수출 기타 지역 급감</strong>: -79.6% (1,914억→391억), 브라질 등 중단",
+      "<strong>홍콩 채권 장기화</strong>: AR 256억 중 195억 3개월 초과 (12.5개월), TP정산 지연 별도",
+      "<strong>Discovery 매출 감소</strong>: -17.0% (4,755억→3,946억), 국내 부진 지속"
+    ]
+  }
+}
