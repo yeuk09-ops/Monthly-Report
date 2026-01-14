@@ -7,12 +7,12 @@
     "status": "published"
   },
   "financialData": {
-    "revenue": { "current": 15584, "previous": 14084 },
-    "domesticRevenue": { "current": 7723, "previous": 8413 },
+    "revenue": { "current": 14882, "previous": 13319 },
+    "domesticRevenue": { "current": 7021, "previous": 7648 },
     "exportRevenue": { "current": 7861, "previous": 5671 },
     "cogs": { "current": 5402, "previous": 4694 },
     "sga": { "current": 5247, "previous": 5187 },
-    "operatingProfit": { "current": 4935, "previous": 4203 },
+    "operatingProfit": { "current": 4233, "previous": 3438 },
     "totalAssets": { "current": 22044, "previous": 19632 },
     "currentAssets": { "current": 8759, "previous": 5482 },
     "cash": { "current": 2245, "previous": 594 },
@@ -27,8 +27,8 @@
   },
   "incomeStatement": {
     "revenue": [
-      { "label": "실판매출(V-)", "current": 15584, "previous": 14084, "change": 1500, "changePercent": 10.7 },
-      { "label": "- 국내매출", "current": 7723, "previous": 8413, "change": -690, "changePercent": -8.2 },
+      { "label": "실판매출(V-)", "current": 14882, "previous": 13319, "change": 1563, "changePercent": 11.7 },
+      { "label": "- 국내매출", "current": 7021, "previous": 7648, "change": -627, "changePercent": -8.2 },
       { "label": "- 수출매출", "current": 7861, "previous": 5671, "change": 2190, "changePercent": 38.6 }
     ],
     "costs": [
@@ -39,7 +39,7 @@
       { "label": "- 물류비", "current": 820, "previous": 760, "change": 60, "changePercent": 7.9 },
       { "label": "- 기타판관비", "current": 1597, "previous": 1707, "change": -110, "changePercent": -6.4 }
     ],
-    "operatingProfit": { "label": "영업이익", "current": 4935, "previous": 4203, "change": 732, "changePercent": 17.4 }
+    "operatingProfit": { "label": "영업이익", "current": 4233, "previous": 3438, "change": 795, "changePercent": 23.1 }
   },
   "channelSales": [
     { "channel": "백화점", "current": 2023, "previous": 2239, "yoy": -9.6 },
@@ -189,13 +189,13 @@
     "positive": [
       "<strong>무차입 경영 달성</strong>: 차입금 900억 → 0원 완전 상환, 재무안정성 강화",
       "<strong>현금 2,245억원</strong>: 전년대비 +1,651억원(+278%) 대폭 증가",
-      "<strong>영업이익률 31.7%</strong>: 4,935억원 영업이익 달성 (1~11월 누계), 전년대비 +17.4%",
-      "<strong>수출 매출 고성장</strong>: +38.6% 증가 (5,671억→7,861억), 수출비중 50.4%",
+      "<strong>영업이익률 28.4%</strong>: 4,233억원 영업이익 달성 (1~11월 누계), 전년대비 +23.1%",
+      "<strong>수출 매출 고성장</strong>: +38.6% 증가 (5,671억→7,861억), 수출비중 52.8%",
       "<strong>중국 매출 2배 성장</strong>: +104.1% (3,538억→7,222억), 전체 매출 견인"
     ],
     "warning": [
       "<strong>중국 채권 급증</strong>: +143.2% (426억→1,036억), 2.3개월 수준으로 증가",
-      "<strong>국내 매출 역성장</strong>: -8.2% (8,413억→7,723억), 전 채널 감소 추세",
+      "<strong>국내 매출 역성장</strong>: -8.2% (7,648억→7,021억), 전 채널 감소 추세",
       "<strong>수출 기타 지역 급감</strong>: -80.2% (1,892억→374억), 브라질 등 중단",
       "<strong>홍콩 채권 장기화</strong>: AR 259억 중 192억 3개월 초과 (11.6개월), TP정산 지연 200억 별도",
       "<strong>Discovery 매출 감소</strong>: -16.9% (4,000억→3,324억), 국내 부진 지속"
