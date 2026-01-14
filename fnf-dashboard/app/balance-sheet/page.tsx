@@ -163,38 +163,39 @@ export default function BalanceSheetPage() {
     {
       channel: '수출-중국',
       oct: 378, nov: 444, dec: 1091,
-      arBalance: 8316, arRatio: 1304,
-      months: 13.0, prevMonths: 1.1,
-      status: 'danger',
+      arBalance: 1473, arRatio: 231,
+      months: 2.3, prevMonths: 1.1,
+      status: 'warning',
       notes: [
-        '※ Snowflake 검증 (DW_COPA_D, DM_F_FI_AR_AGING)',
-        'AR 8,316억 / 월평균매출 638억 = 13.0개월',
-        '주요채권: F&F CHINA CO.,LTD (105787) 7,655억',
-        '→ TP정산 및 지연송금 포함'
+        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
+        'AR 1,473억 / 월평균매출 638억 = 2.3개월',
+        '주요채권: F&F CHINA (105787) 1,441억',
+        '→ 전년 1.1개월 대비 +1.2개월 악화'
       ]
     },
     {
       channel: '수출-홍콩(연결)',
       oct: 17, nov: 18, dec: 26,
-      arBalance: 293, arRatio: 1437,
-      months: 14.4, prevMonths: 15.9,
+      arBalance: 256, arRatio: 1249,
+      months: 12.5, prevMonths: 9.7,
       status: 'danger',
       notes: [
-        '※ Snowflake 검증 (DW_COPA_D, DM_F_FI_AR_AGING)',
-        'AR 293억 / 월평균매출 20억 = 14.4개월',
-        '결제조건: 선적말일 +3개월 적용',
-        '→ TP정산 지연 포함'
+        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
+        'AR 256억 / 월평균매출 20억 = 12.5개월',
+        '주요채권: F&F HK (105788) 175억',
+        '→ 결제조건 선적말일+3개월, TP정산 지연'
       ]
     },
     {
       channel: '수출-기타',
-      oct: 8, nov: 19, dec: 25,
-      arBalance: 70, arRatio: 40,
-      months: 1.3, prevMonths: 1.7,
-      status: 'normal',
+      oct: 8, nov: 19, dec: 18,
+      arBalance: 41, arRatio: 275,
+      months: 2.8, prevMonths: 1.5,
+      status: 'warning',
       notes: [
-        '동남아, 유럽, 미국 등 다양한 시장',
-        '전년 대비 개선 추세'
+        '※ Snowflake 검증 (WWDCH=09, ZARTYP=R1)',
+        'AR 41억 / 월평균매출 15억 = 2.8개월',
+        '동남아, 유럽, 미국 등'
       ]
     },
   ];
