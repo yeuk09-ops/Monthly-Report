@@ -134,14 +134,15 @@ export default function BalanceSheetPage() {
     { label: '수출-기타', dec24: 55, dec25: 70, change: 15, changePercent: 27.3 },
   ];
 
+  // Snowflake 검증 (DW_IVTR_HIST, 24.12 vs 25.12)
   const workingCapitalInv = [
     { label: 'MLB', subItems: [
-      { label: '의류-당시즌', dec24: 98, dec25: 105, change: 7, changePercent: 7.1 },
-      { label: '의류-과시즌', dec24: 113, dec25: 85, change: -28, changePercent: -24.8 },
+      { label: '의류-당시즌', dec24: 78, dec25: 88, change: 10, changePercent: 13.0 },
+      { label: '의류-과시즌', dec24: 157, dec25: 114, change: -43, changePercent: -27.3 },
     ]},
     { label: 'Discovery', subItems: [
-      { label: '의류-당시즌', dec24: 459, dec25: 550, change: 91, changePercent: 19.8 },
-      { label: '의류-과시즌', dec24: 514, dec25: 460, change: -54, changePercent: -10.5 },
+      { label: '의류-당시즌', dec24: 375, dec25: 480, change: 105, changePercent: 28.2 },
+      { label: '의류-과시즌', dec24: 478, dec25: 456, change: -22, changePercent: -4.4 },
     ]},
   ];
 
