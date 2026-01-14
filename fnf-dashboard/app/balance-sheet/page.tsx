@@ -145,8 +145,9 @@ export default function BalanceSheetPage() {
     ]},
   ];
 
-  // 여신기준 검증 데이터 (기준월+직전월 매출 대비 채권)
-  // 계산방식: 채권 - 기준월매출 = 잔여분 / 직전월매출 → 월환산
+  // 여신기준 검증 데이터
+  // 국내/중국: 채권 - 기준월매출 = 잔여분 / 직전월매출 → 월환산
+  // 홍콩: 3개월 매출/3 = 월평균, 기타: 2개월 매출/2 = 월평균
   const creditVerification = [
     {
       channel: '국내',
@@ -155,7 +156,6 @@ export default function BalanceSheetPage() {
       months: 1.1, prevMonths: 1.3,
       status: 'normal',
       notes: [
-        '※ 검증: 980억 - 12월 850억 = 130억 / 11월 1,055억 = 0.1개월 → 총 1.1개월',
         '백화점: 신세계(익월10일), 현대/롯데(익월30일) 外',
         '면세점: 롯데(익월8일), 신라(익월10일), 신세계(익월15일), 현대(익월30일) 外',
         '대리점: 1차(1~15일→당월23~25일), 2차(16일~말일→익월14~17일)'
@@ -168,7 +168,6 @@ export default function BalanceSheetPage() {
       months: 1.9, prevMonths: 1.1,
       status: 'warning',
       notes: [
-        '※ 검증: 1,473억 - 12월 1,091억 = 382억 / 11월 444억 = 0.9개월 → 총 1.9개월',
         '(1) 선급금: 중국→본사 3.5억위안 (26SS용)',
         '(2) 정상채무: 12월 수출 509,306,863 CNY',
         '    → 수출후 익월 송금 (1월 송금예정, 크레딧노트 포함)',
@@ -178,26 +177,24 @@ export default function BalanceSheetPage() {
     {
       channel: '수출-홍콩(연결)',
       oct: 17, nov: 18, dec: 26,
-      arBalance: 256, arRatio: 420,
-      months: 4.2, prevMonths: 9.7,
+      arBalance: 256, arRatio: 1261,
+      months: 12.6, prevMonths: 9.7,
       status: 'danger',
       notes: [
-        '※ 검증: 3개월 정상채권(61억) 대비 256억 → 약 4.2개월 환산',
-        '결제조건: 선적말일 +3개월 적용',
-        '3개월 초과분: 195억 (256억 - 3개월 매출 61억)',
-        '→ TP정산 지연 211억 별도, 총 지연채권 406억'
+        '결제조건: 선적말일 +3개월 적용 (정상채권 3개월)',
+        '3개월 초과분: 195억 (256억 - 3개월 매출 61억) → 지연채권',
+        'TP정산 지연 211억 별도, 총 지연채권 406억'
       ]
     },
     {
       channel: '수출-기타',
       oct: 8, nov: 19, dec: 18,
-      arBalance: 41, arRatio: 111,
-      months: 1.1, prevMonths: 1.5,
-      status: 'normal',
+      arBalance: 41, arRatio: 222,
+      months: 2.2, prevMonths: 1.5,
+      status: 'warning',
       notes: [
-        '※ 검증: 2개월 매출(37억) 대비 41억 → 약 1.1개월 환산',
-        '동남아, 유럽, 미국 등',
-        '→ 2개월치 정상채권 범위 내'
+        '동남아, 유럽, 미국 등 (정상채권 2개월)',
+        '2개월 초과분: 4억 (41억 - 2개월 매출 37억) → 지연채권'
       ]
     },
   ];
