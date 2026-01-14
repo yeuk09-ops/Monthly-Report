@@ -100,24 +100,35 @@
   },
   "workingCapital": {
     "ar": [
-      { "label": "국내", "dec24": 1039, "dec25": 987, "change": -52, "changePercent": -5.0 },
-      { "label": "수출-중국", "dec24": 426, "dec25": 1473, "change": 1047, "changePercent": 245.8, "warning": true },
-      { "label": "수출-홍콩(연결)", "dec24": 223, "dec25": 256, "change": 33, "changePercent": 14.8, "warning": true },
-      { "label": "수출-기타", "dec24": 55, "dec25": 41, "change": -14, "changePercent": -25.5 }
+      { "label": "국내", "dec24": 1020, "dec25": 980, "change": -40, "changePercent": -3.9 },
+      { "label": "수출-중국", "dec24": 81, "dec25": 850, "change": 769, "changePercent": 949.4, "warning": true, "note": "결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이" },
+      { "label": "수출-홍콩(연결)", "dec24": 168, "dec25": 280, "change": 112, "changePercent": 66.7, "warning": true },
+      { "label": "수출-기타", "dec24": 55, "dec25": 70, "change": 15, "changePercent": 27.3 }
     ],
+    "arNote": "중국채권: 결산시 선수금과 상계. 외환차손익 반영 효과 등으로 인한 차이",
     "inventory": [
       {
         "brand": "MLB",
         "items": [
-          { "label": "의류-당시즌", "dec24": 78, "dec25": 88, "change": 10, "changePercent": 13.0 },
-          { "label": "의류-과시즌", "dec24": 157, "dec25": 114, "change": -43, "changePercent": -27.3 }
+          { "label": "전체재고", "dec24": 544, "dec25": 547, "change": 3, "changePercent": 0.5 },
+          { "label": "- 의류-당시즌", "dec24": 78, "dec25": 88, "change": 10, "changePercent": 13.0 },
+          { "label": "- 의류-과시즌", "dec24": 157, "dec25": 114, "change": -43, "changePercent": -27.3 },
+          { "label": "- 기타(잡화/신발 등)", "dec24": 309, "dec25": 345, "change": 36, "changePercent": 11.7 }
         ]
       },
       {
         "brand": "Discovery",
         "items": [
-          { "label": "의류-당시즌", "dec24": 375, "dec25": 480, "change": 105, "changePercent": 28.2 },
-          { "label": "의류-과시즌", "dec24": 478, "dec25": 456, "change": -22, "changePercent": -4.4 }
+          { "label": "전체재고", "dec24": 1097, "dec25": 1158, "change": 61, "changePercent": 5.6 },
+          { "label": "- 의류-당시즌", "dec24": 375, "dec25": 480, "change": 105, "changePercent": 28.2 },
+          { "label": "- 의류-과시즌", "dec24": 478, "dec25": 456, "change": -22, "changePercent": -4.4 },
+          { "label": "- 기타(잡화/신발 등)", "dec24": 244, "dec25": 222, "change": -22, "changePercent": -9.0 }
+        ]
+      },
+      {
+        "brand": "기타",
+        "items": [
+          { "label": "전체재고(MLB Kids/Duvetica 등)", "dec24": 612, "dec25": 598, "change": -14, "changePercent": -2.3 }
         ]
       }
     ]
