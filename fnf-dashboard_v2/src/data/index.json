@@ -1,6 +1,14 @@
 {
   "availableMonths": [
     {
+      "year": 2026,
+      "month": 1,
+      "label": "2026년 1월",
+      "file": "2026-01.json",
+      "status": "published",
+      "updatedAt": "2026-02-10"
+    },
+    {
       "year": 2025,
       "month": 12,
       "label": "2025년 12월",
@@ -18,7 +26,7 @@
     }
   ],
   "defaultMonth": {
-    "year": 2025,
-    "month": 12
+    "year": 2026,
+    "month": 1
   }
 }

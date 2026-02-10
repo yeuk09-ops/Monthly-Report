@@ -1,0 +1,453 @@
+{
+  "period": "2026-01",
+  "title": "FNF 재무제표 대시보드 - 26년 1월",
+  "dataSource": {
+    "balanceSheet": "F&F 월별재무제표(26.01).csv",
+    "incomeStatement": "Snowflake DW_COPA_D",
+    "updateDate": "2026-02-10"
+  },
+  "financialData": {
+    "incomeStatement": {
+      "revenue": {
+        "current": 1638,
+        "previous": 1643,
+        "annualized": 17006,
+        "note": "26년 1월 실적 (억원)"
+      },
+      "domesticRevenue": {
+        "current": 747,
+        "previous": 750,
+        "annualized": 8000,
+        "note": "국내 매출 (추정)"
+      },
+      "exportRevenue": {
+        "current": 892,
+        "previous": 893,
+        "annualized": 9006,
+        "note": "수출 매출 (54.5% 비중)"
+      },
+      "commissions": {
+        "current": 172,
+        "previous": 163,
+        "annualized": 1826,
+        "note": "점수수료 (V-)"
+      },
+      "netSales": {
+        "current": 1467,
+        "previous": 1480,
+        "annualized": 15180,
+        "note": "출고매출 (실판매 - 점수수료)"
+      },
+      "cogs": {
+        "current": 574,
+        "previous": 578,
+        "annualized": 6129,
+        "note": "매출원가"
+      },
+      "grossProfit": {
+        "current": 893,
+        "previous": 902,
+        "annualized": 9051,
+        "note": "매출총이익 (출고매출 - 매출원가)"
+      },
+      "sga": {
+        "current": 0,
+        "previous": 0,
+        "annualized": 3900,
+        "note": "판관비 (월별 미제공, 연환산 추정)"
+      },
+      "operatingProfit": {
+        "current": 0,
+        "previous": 0,
+        "annualized": 5119,
+        "note": "영업이익 (연환산 추정: 17006 × 30.1%)"
+      }
+    },
+    "balanceSheet": {
+      "assets": {
+        "totalAssets": {
+          "current": 22938,
+          "previous": 20267,
+          "note": "총자산 (2,293,786백만원 → 22938억)"
+        },
+        "currentAssets": {
+          "current": 9983,
+          "previous": 5051,
+          "note": "유동자산 (+97.6%)"
+        },
+        "cash": {
+          "current": 3158,
+          "previous": 990,
+          "note": "현금 (+219%)"
+        },
+        "receivables": {
+          "current": 2350,
+          "previous": 1970,
+          "note": "매출채권 (+19.3%)"
+        },
+        "inventory": {
+          "current": 2198,
+          "previous": 2101,
+          "note": "재고자산 순액 (평가충당금 차감 후)"
+        },
+        "inventoryGross": {
+          "current": 2311,
+          "previous": 2217,
+          "note": "재고자산 총액"
+        },
+        "inventoryAllowance": {
+          "current": 114,
+          "previous": 116,
+          "note": "재고평가충당금"
+        },
+        "investments": {
+          "current": 6717,
+          "previous": 6750,
+          "note": "투자자산"
+        },
+        "nonCurrentAssets": {
+          "current": 12955,
+          "previous": 15216,
+          "note": "비유동자산"
+        },
+        "tangibleAssets": {
+          "current": 5972,
+          "previous": 6093,
+          "note": "유무형자산"
+        },
+        "rightOfUseAssets": {
+          "current": 1307,
+          "previous": 1529,
+          "note": "사용권자산 (리스)"
+        }
+      },
+      "liabilities": {
+        "totalLiabilities": {
+          "current": 4292,
+          "previous": 4910,
+          "note": "총부채 (-12.6%)"
+        },
+        "currentLiabilities": {
+          "current": 2902,
+          "previous": 3328,
+          "note": "유동부채"
+        },
+        "payables": {
+          "current": 957,
+          "previous": 821,
+          "note": "매입채무 (+16.4%)"
+        },
+        "accruals": {
+          "current": 330,
+          "previous": 360,
+          "note": "미지급금"
+        },
+        "borrowings": {
+          "current": 0,
+          "previous": 200,
+          "note": "차입금 (무차입 달성)"
+        },
+        "incomeTaxPayable": {
+          "current": 1023,
+          "previous": 811,
+          "note": "법인세부채 (+26.2%)"
+        },
+        "nonCurrentLiabilities": {
+          "current": 1390,
+          "previous": 1582,
+          "note": "비유동부채"
+        },
+        "leaseLiabilities": {
+          "current": 1390,
+          "previous": 1582,
+          "note": "리스부채"
+        }
+      },
+      "equity": {
+        "totalEquity": {
+          "current": 18646,
+          "previous": 15357,
+          "note": "자본총계 (+21.4%)"
+        },
+        "capital": {
+          "current": 38,
+          "previous": 38,
+          "note": "자본금"
+        },
+        "capitalSurplus": {
+          "current": 3199,
+          "previous": 3199,
+          "note": "자본잉여금"
+        },
+        "retainedEarnings": {
+          "current": 15999,
+          "previous": 12645,
+          "note": "이익잉여금 (+26.5%)"
+        },
+        "treasuryStock": {
+          "current": 590,
+          "previous": 525,
+          "note": "자기주식"
+        }
+      }
+    },
+    "brandPerformance": {
+      "mlb": {
+        "revenue": {
+          "total": 1114,
+          "domestic": 277,
+          "export": 837,
+          "exportRatio": 75.1,
+          "note": "수출 주도 성장"
+        }
+      },
+      "discovery": {
+        "revenue": {
+          "total": 395,
+          "domestic": 371,
+          "export": 24,
+          "exportRatio": 6.1,
+          "note": "국내 중심"
+        }
+      },
+      "mlbKids": {
+        "revenue": {
+          "total": 90,
+          "domestic": 60,
+          "export": 31,
+          "exportRatio": 34.4,
+          "note": "균형 전략"
+        }
+      },
+      "duvetica": {
+        "revenue": {
+          "total": 35,
+          "domestic": 35,
+          "export": 0,
+          "exportRatio": 0,
+          "note": "프리미엄 국내"
+        }
+      },
+      "sergioTacchini": {
+        "revenue": {
+          "total": 5,
+          "domestic": 4,
+          "export": 0,
+          "exportRatio": 0,
+          "note": "틈새 시장"
+        }
+      }
+    }
+  },
+  "calculatedMetrics": {
+    "profitability": {
+      "grossMargin": {
+        "current": 60.9,
+        "previous": 61.0,
+        "annualized": 59.6,
+        "note": "매출총이익률 (출고매출 기준)"
+      },
+      "operatingMargin": {
+        "current": 0,
+        "previous": 0,
+        "annualized": 30.1,
+        "note": "영업이익률 (연환산)"
+      },
+      "roe": {
+        "current": 0,
+        "previous": 0,
+        "annualized": 26.9,
+        "note": "자기자본이익률 (5119 ÷ 18646)"
+      },
+      "roa": {
+        "current": 0,
+        "previous": 0,
+        "annualized": 21.8,
+        "note": "총자산이익률 (5119 ÷ 22938)"
+      }
+    },
+    "stability": {
+      "debtRatio": {
+        "current": 23.0,
+        "previous": 32.0,
+        "change": -9.0,
+        "note": "부채비율 (4292 ÷ 18646 × 100)"
+      },
+      "equityRatio": {
+        "current": 81.3,
+        "previous": 75.8,
+        "change": 5.5,
+        "note": "자기자본비율"
+      },
+      "netDebtRatio": {
+        "current": -16.9,
+        "previous": -5.1,
+        "change": -11.8,
+        "note": "순차입금비율 ((0-3158) ÷ 18646)"
+      },
+      "currentRatio": {
+        "current": 239.3,
+        "previous": 129.0,
+        "change": 110.3,
+        "note": "유동비율 (9983 ÷ 4172)"
+      }
+    },
+    "activity": {
+      "receivablesTurnover": {
+        "current": 7.2,
+        "previous": 7.0,
+        "annualized": true,
+        "note": "매출채권회전율 (17006 ÷ 2350)"
+      },
+      "inventoryTurnover": {
+        "current": 6.9,
+        "previous": 6.1,
+        "annualized": true,
+        "note": "재고자산회전율 (15180 ÷ 2198)"
+      },
+      "dso": {
+        "current": 50,
+        "previous": 52,
+        "change": -2,
+        "note": "매출채권회전일수 (365 ÷ 7.2)"
+      },
+      "dio": {
+        "current": 53,
+        "previous": 59,
+        "change": -6,
+        "note": "재고회전일수 (365 ÷ 6.9)"
+      },
+      "dpo": {
+        "current": 57,
+        "previous": 38,
+        "change": 19,
+        "note": "매입채무회전일수"
+      },
+      "ccc": {
+        "current": 46,
+        "previous": 73,
+        "change": -27,
+        "note": "현금전환주기 (DSO + DIO - DPO)"
+      }
+    },
+    "growth": {
+      "revenueGrowth": -0.3,
+      "domesticGrowth": -0.4,
+      "exportGrowth": -0.1,
+      "opProfitGrowth": 0,
+      "assetGrowth": 13.2,
+      "equityGrowth": 21.4,
+      "cashGrowth": 219.0,
+      "note": "전년 동월(25.01) 대비"
+    }
+  },
+  "workingCapital": {
+    "nwc": {
+      "current": 3591,
+      "previous": 3250,
+      "change": 341,
+      "note": "순운전자본 (재고 + 매출채권 - 매입채무)"
+    },
+    "nwcRatio": {
+      "current": 23.7,
+      "previous": 21.9,
+      "note": "NWC ÷ 출고매출 비율 (%)"
+    }
+  },
+  "insights": {
+    "positive": [
+      {
+        "title": "무차입 경영 달성",
+        "description": "차입금 20,000백만원 → 0원으로 전액 상환하여 재무 건전성 극대화",
+        "impact": "high"
+      },
+      {
+        "title": "현금 보유 219% 급증",
+        "description": "현금 990억원 → 3,158억원으로 유동성 대폭 개선",
+        "impact": "high"
+      },
+      {
+        "title": "자본 축적 가속화",
+        "description": "이익잉여금 26.5% 증가 (12,645억 → 15,999억)로 재무 기반 강화",
+        "impact": "high"
+      },
+      {
+        "title": "CCC 대폭 개선",
+        "description": "현금전환주기 73일 → 46일로 27일 단축, 현금흐름 효율성 향상",
+        "impact": "high"
+      }
+    ],
+    "monitoring": [
+      {
+        "title": "1월 매출 소폭 감소",
+        "description": "실판매 1,643억 → 1,638억 (△0.3%), 계절성 요인 모니터링 필요",
+        "impact": "medium"
+      },
+      {
+        "title": "점수수료 증가",
+        "description": "163억 → 172억 (+5.5%), 백화점 채널 비중 증가 추정",
+        "impact": "low"
+      },
+      {
+        "title": "매출채권 증가",
+        "description": "1,970억 → 2,350억 (+19.3%), 회수 관리 필요",
+        "impact": "medium"
+      },
+      {
+        "title": "법인세부채 증가",
+        "description": "811억 → 1,023억 (+26.2%), 높은 수익성 반영 (긍정적)",
+        "impact": "low"
+      }
+    ]
+  },
+  "aiRecommendations": [
+    "2~3월 매출 추이 모니터링으로 계절성 회복 여부 확인",
+    "채널별 수익성 분석을 통한 점수수료 비중 최적화",
+    "매출채권 회수 프로세스 강화 및 대손 리스크 모니터링",
+    "국내 매출 성장 전략 수립 (Discovery 브랜드 활성화)",
+    "수출 주도 성장 모멘텀 유지 및 신규 시장 개척"
+  ],
+  "comparisonYoY": {
+    "revenue": {
+      "current": 1638,
+      "previous": 1643,
+      "change": -5,
+      "changePercent": -0.3
+    },
+    "operatingProfit": {
+      "current": 0,
+      "previous": 0,
+      "annualizedCurrent": 5119,
+      "annualizedPrevious": 5013,
+      "changePercent": 2.1
+    },
+    "totalAssets": {
+      "current": 22938,
+      "previous": 20267,
+      "change": 2671,
+      "changePercent": 13.2
+    },
+    "totalLiabilities": {
+      "current": 4292,
+      "previous": 4910,
+      "change": -618,
+      "changePercent": -12.6
+    },
+    "equity": {
+      "current": 18646,
+      "previous": 15357,
+      "change": 3289,
+      "changePercent": 21.4
+    }
+  },
+  "notes": [
+    "손익 데이터는 Snowflake DW_COPA_D에서 조회 (26년 1월 실적)",
+    "재무상태표는 F&F 월별재무제표(26.01).csv 기준",
+    "연환산 = 26년 1월 + 25년 2~12월",
+    "영업이익은 월별 판관비 데이터 미제공으로 연환산 추정치 사용",
+    "단위: 억원 (백만원 ÷ 100)",
+    "수출 비중 54.5% (892억 / 1,638억)",
+    "부채비율 23.0%로 우수한 재무 안정성",
+    "무차입 경영 달성으로 순차입금비율 △16.9%"
+  ]
+}

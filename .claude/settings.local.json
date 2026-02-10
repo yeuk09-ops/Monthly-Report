@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 2; try { \\(Invoke-WebRequest -Uri ''http://localhost:8080/FNF_%EC%9E%AC%EB%AC%B4%EC%A0%9C%ED%91%9C_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_v3.html'' -UseBasicParsing -TimeoutSec 5\\).StatusCode } catch { ''Error'' }\")",
+      "Bash(copy:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd FNF 12월 재무제표 대시보드\n\n- 25년 12월 기준 재무상태표/손익계산서 대시보드\n- 경영요약, 재무상태표, 손익계산서\\(CO\\) 3개 탭 구성\n- 여신기준 검증표 \\(11~12월 매출 대비 채권분석\\)\n- AI 인사이트 분석 포함\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(where:*)",
+      "Bash(vercel:*)",
+      "Bash(git commit:*)",
+      "Bash(dir \"C:\\\\Users\\\\AC1144\\\\AI_Fin_Analysis\\\\Claude\" /b /s)",
+      "Bash(findstr:*)",
+      "Bash(pip show:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(git cat-file:*)",
+      "Bash(npx vercel --prod)"
+    ]
+  }
+}
