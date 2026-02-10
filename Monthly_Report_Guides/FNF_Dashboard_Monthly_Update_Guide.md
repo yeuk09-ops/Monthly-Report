@@ -1,7 +1,7 @@
 # FNF 재무제표 대시보드 월간 업데이트 가이드
 
 **작성일**: 2026년 2월
-**버전**: 5.0
+**버전**: 6.0
 **대시보드 URL**: https://fnf-dashboard.vercel.app
 
 ---
@@ -75,9 +75,224 @@ C:\Users\AC1144\AI_Fin_Analysis\Claude\Monthly_Report\fnf-dashboard\
 
 ---
 
-## 3. Snowflake 쿼리 가이드
+## 3. 데이터 처리 흐름 (Data Pipeline)
 
-### 3.1 연결 정보
+### 3.1 전체 프로세스 개요
+
+```
+Step 1: 손익계산서 데이터 확인
+   ↓
+   Snowflake DW_COPA_D 조회
+   → 매출/원가/이익 누계 데이터 추출
+   → incomeStatement 섹션에 ratio 값 포함하여 저장
+
+Step 2: 재무상태표 데이터 업데이트
+   ↓
+   CSV 파일 (F&F 월별재무제표) 읽기
+   → 자산/부채/자본 항목 추출
+   → balanceSheet 섹션 업데이트
+   → 3개월 비교 (jan25, dec25, jan26)
+   → MoM/YoY 증감 계산
+
+Step 3: 재무비율 계산
+   ↓
+   손익계산서 + 재무상태표 데이터 결합
+   → 수익성 지표: incomeStatement.*.ratio 값 직접 사용
+   → 안정성 지표: 시점 잔액으로 비율 계산
+   → 활동성 지표: 연환산 (× 12) 적용하여 계산
+
+Step 4: 경영요약 및 인사이트 생성
+   ↓
+   calculatedMetrics 생성
+   → 전년 대비(YoY) 성장률 계산
+   → KPI 카드 표시
+   → AI 인사이트 자동 생성
+```
+
+### 3.2 데이터 필드 구조
+
+#### 3.2.1 financialData (기본 재무 데이터)
+
+```typescript
+{
+  revenue: {
+    current: 1639,           // 당월 (26.1월)
+    previousMonth: 1644,     // 전월 (25.12월) - MoM 비교용
+    previousYear: 1062       // 전년동월 (25.1월) - YoY 비교용
+  },
+  operatingProfit: { current, previousMonth, previousYear },
+  totalAssets: { current, previousMonth, previousYear },
+  // ... 기타 재무 항목
+}
+```
+
+**사용 원칙**:
+- `current`: 모든 페이지에서 당월 값 표시
+- `previousMonth`: MoM 증감 계산 (전월 대비)
+- `previousYear`: YoY 증감 계산 (전년 동월 대비)
+
+#### 3.2.2 incomeStatement (손익계산서 - ratio 포함)
+
+```typescript
+{
+  grossProfit: {
+    label: "매출총이익",
+    current: 1079,
+    previous: 1088,          // 전월 (MoM)
+    change: -9,
+    changePercent: -0.8,
+    ratio: 65.8              // ★ 이익률 (current / revenue.current × 100)
+  },
+  operatingProfit: {
+    label: "영업이익",
+    current: 658,
+    previous: 679,
+    change: -21,
+    changePercent: -3.1,
+    ratio: 40.2              // ★ 이익률 (직접 계산 필요 없음)
+  }
+}
+```
+
+**중요**: `ratio` 필드는 Snowflake에서 추출 시 이미 계산된 값입니다.
+- 경영요약 페이지에서는 이 `ratio` 값을 직접 사용
+- 재계산하면 소수점 오차로 불일치 발생 가능
+
+#### 3.2.3 balanceSheet (재무상태표 - 3개월 비교)
+
+```typescript
+{
+  totals: [
+    {
+      label: "총자산",
+      jan25: 20267,          // 전년동월
+      dec25: 22155,          // 전월
+      jan26: 22938,          // 당월
+      momChange: 783,        // jan26 - dec25
+      momChangePercent: 3.5,
+      yoyChange: 2671,       // jan26 - jan25
+      yoyChangePercent: 13.2
+    },
+    // 총부채, 총자본
+  ],
+  assets: [...],
+  liabilities: [...],
+  equity: [...]
+}
+```
+
+### 3.3 계산 로직 상세
+
+#### 3.3.1 경영요약 페이지 (app/page.tsx)
+
+**수익성 지표 - incomeStatement ratio 사용**:
+
+```typescript
+// ❌ 잘못된 방법 - 직접 계산하면 소수점 오차
+const grossMargin = {
+  current: (d.revenue.current - d.cogs.current) / d.revenue.current * 100
+};
+
+// ✅ 올바른 방법 - incomeStatement ratio 직접 사용
+const grossMargin = {
+  current: incomeStmt.grossProfit?.ratio ||
+           (d.revenue.current - d.cogs.current) / d.revenue.current * 100,
+  previousYear: d.revenue.previousYear && d.cogs.previousYear
+    ? (d.revenue.previousYear - d.cogs.previousYear) / d.revenue.previousYear * 100
+    : 0
+};
+
+const opMargin = {
+  current: incomeStmt.operatingProfit?.ratio ||
+           d.operatingProfit.current / d.revenue.current * 100,
+  previousYear: d.operatingProfit.previousYear && d.revenue.previousYear
+    ? d.operatingProfit.previousYear / d.revenue.previousYear * 100
+    : 0
+};
+```
+
+**안정성 지표 - 시점 잔액 사용**:
+
+```typescript
+// 부채비율: 당월 vs 전년동월
+const debtRatio = {
+  current: d.totalLiabilities.current / d.equity.current * 100,
+  previousYear: d.totalLiabilities.previousYear / d.equity.previousYear * 100
+};
+
+// 자기자본비율
+const equityRatio = {
+  current: d.equity.current / d.totalAssets.current * 100,
+  previousYear: d.equity.previousYear / d.totalAssets.previousYear * 100
+};
+```
+
+**활동성 지표 - 연환산 (× 12)**:
+
+```typescript
+// 매출채권회전율
+const avgReceivables = (d.receivables.current + d.receivables.previousMonth) / 2;
+const avgReceivablesYoY = d.receivables.previousYear;  // 전년 1월만 사용
+
+const receivablesTurnover = {
+  current: (d.revenue.current * 12) / avgReceivables,      // ★ × 12 연환산
+  previousYear: (d.revenue.previousYear * 12) / avgReceivablesYoY
+};
+
+const dso = {
+  current: 365 / receivablesTurnover.current,
+  previousYear: 365 / receivablesTurnover.previousYear
+};
+
+// 재고회전율, 매입채무회전율도 동일
+```
+
+#### 3.3.2 재무상태표 페이지 (app/balance-sheet/page.tsx)
+
+**재무비율 카드**:
+
+```typescript
+// 부채비율
+const debtRatio = balanceSheet.totals[1].jan26 && balanceSheet.totals[2].jan26
+  ? (balanceSheet.totals[1].jan26 / balanceSheet.totals[2].jan26 * 100).toFixed(1) + '%'
+  : '-';
+
+// 전월 대비 변화
+const prevDebtRatio = (balanceSheet.totals[1].dec25 / balanceSheet.totals[2].dec25 * 100);
+const change = (currentDebtRatio - prevDebtRatio).toFixed(1);
+```
+
+### 3.4 데이터 일관성 체크리스트
+
+월간 업데이트 시 다음 항목을 반드시 확인:
+
+- [ ] **손익계산서 ratio 값이 경영요약과 일치하는가?**
+  - incomeStatement.grossProfit.ratio === 경영요약 매출총이익률
+  - incomeStatement.operatingProfit.ratio === 경영요약 영업이익률
+
+- [ ] **전년 비교가 올바른가?**
+  - 경영요약 YoY 성장률 = (current - previousYear) / previousYear × 100
+  - previousMonth가 아닌 previousYear 사용 확인
+
+- [ ] **재무상태표 3개월 비교가 정확한가?**
+  - jan25 (전년동월), dec25 (전월), jan26 (당월)
+  - momChange = jan26 - dec25
+  - yoyChange = jan26 - jan25
+
+- [ ] **연환산 적용이 올바른가?**
+  - 매출/원가 관련 회전율: × 12 적용
+  - ROE, ROA: 월 영업이익 × 0.8 × 12 (당기순이익 추정)
+
+- [ ] **NaN 방지 처리가 되어 있는가?**
+  - formatNumber/formatPercent에 null/undefined/NaN/Infinity 체크
+  - optional chaining (?.) 사용
+  - 조건부 렌더링으로 undefined 필드 보호
+
+---
+
+## 4. Snowflake 쿼리 가이드
+
+### 4.1 연결 정보
 
 ```
 Account: gv28284.ap-northeast-2.aws
@@ -87,7 +302,7 @@ Warehouse: dev_wh
 Role: pu_sql_sap
 ```
 
-### 3.2 브랜드별/채널별 매출 조회 (DW_COPA_D)
+### 4.2 브랜드별/채널별 매출 조회 (DW_COPA_D)
 
 **핵심 원칙:**
 - `FNF 매출 = 국내매출(직영/위탁) + 사입출고 + 수출출고`
@@ -186,7 +401,7 @@ GROUP BY BRAND
 ORDER BY BRAND;
 ```
 
-### 3.3 매출채권 (AR) 검증 쿼리
+### 4.3 매출채권 (AR) 검증 쿼리
 
 **테이블**: `FNF.SAP_FNF.DM_F_FI_AR_AGING`
 
@@ -215,7 +430,7 @@ WHERE CALMONTH = '2025-12'
 GROUP BY REGION;
 ```
 
-### 3.4 월별 수출매출 조회
+### 4.4 월별 수출매출 조회
 
 ```sql
 -- 수출 월별 매출 (여신검증용)
@@ -235,7 +450,7 @@ GROUP BY TO_CHAR(PST_DT, 'YYYY-MM'), REGION
 ORDER BY MONTH, REGION;
 ```
 
-### 3.5 재고자산 검증 쿼리
+### 4.5 재고자산 검증 쿼리
 
 **테이블**: `FNF.SAP_FNF.DW_IVTR_HIST`
 
@@ -283,9 +498,9 @@ ORDER BY i.BRD_CD, CATEGORY, i.YYYYMM;
 
 ---
 
-## 4. 계산 로직
+## 5. 계산 로직
 
-### 4.1 여신검증 - 채권개월수 계산
+### 5.1 여신검증 - 채권개월수 계산
 
 | 채널 | 계산방식 | 정상채권 기준 |
 |:---|:---|:---|
@@ -397,7 +612,7 @@ ccc = DSO + DIO - DPO
 
 ---
 
-## 5. 월간 업데이트 절차
+## 6. 월간 업데이트 절차
 
 ### 5.1 Step 1: CSV 데이터 업데이트 (회계팀 제공)
 
@@ -416,7 +631,7 @@ const financialData = {
 };
 ```
 
-### 5.2 Step 2: Snowflake 검증 스크립트 실행
+### 4.2 Step 2: Snowflake 검증 스크립트 실행
 
 ```bash
 cd C:\Users\AC1144\AI_Fin_Analysis\Claude\Monthly_Report
@@ -433,7 +648,7 @@ python inventory_verify.py
 # → workingCapitalInv 배열 업데이트
 ```
 
-### 5.3 Step 3: 대시보드 코드 업데이트
+### 4.3 Step 3: 대시보드 코드 업데이트
 
 **손익계산서 (income-statement/page.tsx):**
 - 채널별 매출 분석 (국내+사입, 수출제외)
@@ -448,7 +663,7 @@ python inventory_verify.py
 - `creditVerification` 배열 (여신검증)
 - `workingCapitalInv` 배열 (재고 브랜드별)
 
-### 5.4 Step 4: 배포
+### 4.4 Step 4: 배포
 
 ```bash
 cd fnf-dashboard
@@ -460,9 +675,9 @@ vercel --prod --yes
 
 ---
 
-## 6. AI 분석 항목 및 프롬프트
+## 7. AI 분석 항목 및 프롬프트
 
-### 6.1 경영요약 탭 AI 분석 항목
+### 5.1 경영요약 탭 AI 분석 항목
 
 **수익성 분석 (InsightCard - positive):**
 - 매출 성장률 및 영업이익 증감
@@ -481,7 +696,7 @@ vercel --prod --yes
 - 국내 매출 역성장 여부
 - 재고회전일수
 
-### 6.2 AI 인사이트 생성 프롬프트
+### 4.2 AI 인사이트 생성 프롬프트
 
 ```
 다음 재무데이터를 분석하여 경영요약 대시보드의 AI 인사이트를 작성해주세요.
@@ -514,7 +729,7 @@ vercel --prod --yes
 - 성장성: 매출성장률, 영업이익성장률, 수출비중
 ```
 
-### 6.3 여신검증 분석 프롬프트
+### 4.3 여신검증 분석 프롬프트
 
 ```
 다음 매출채권 데이터를 분석하여 채권 건전성을 평가해주세요.
@@ -534,7 +749,7 @@ vercel --prod --yes
 4. 비고 내용 작성
 ```
 
-### 6.4 재고 분석 프롬프트
+### 4.4 재고 분석 프롬프트
 
 ```
 다음 Snowflake 재고 검증 데이터를 분석해주세요.
@@ -555,9 +770,9 @@ vercel --prod --yes
 
 ---
 
-## 7. 사용자 요청 데이터 양식
+## 8. 사용자 요청 데이터 양식
 
-### 7.1 월별 재무제표 CSV 양식 (유일한 CSV 입력)
+### 5.1 월별 재무제표 CSV 양식 (유일한 CSV 입력)
 
 | 계정과목 | 24년 12월 | 25년 12월(e) | 비고 |
 |:---|---:|---:|:---|
@@ -572,7 +787,7 @@ vercel --prod --yes
 | 총부채 | 4,309 | 4,144 | 억원 |
 | 자기자본 | 14,939 | 18,304 | 억원 |
 
-### 7.2 여신검증 비고 양식 (사용자 추가 정보)
+### 4.2 여신검증 비고 양식 (사용자 추가 정보)
 
 | 채널 | 결제조건 | 지연내역 | 비고 |
 |:---|:---|:---|:---|
@@ -602,9 +817,9 @@ vercel --prod --yes
 
 ---
 
-## 10. 검증 체크리스트
+## 9. 검증 체크리스트
 
-### 10.1 데이터 정합성
+### 5.1 데이터 정합성
 
 ```
 □ 재무제표 합계 일치? (자산 = 부채 + 자본)
@@ -613,7 +828,7 @@ vercel --prod --yes
 □ 전년 동기 데이터 정확성?
 ```
 
-### 10.2 Snowflake 여신검증
+### 4.2 Snowflake 여신검증
 
 ```
 □ AR 쿼리 필터 정확? (ZARTYP='R1', WWDCH='09')
@@ -622,7 +837,7 @@ vercel --prod --yes
 □ 정상채권 기준 적용? (국내/중국 1개월, 홍콩 3개월, 기타 2개월)
 ```
 
-### 10.3 Snowflake 재고검증
+### 4.3 Snowflake 재고검증
 
 ```
 □ CREATE_DT 최신값 필터?
@@ -632,7 +847,7 @@ vercel --prod --yes
 □ 의류 아이템코드 필터 적용?
 ```
 
-### 10.4 Snowflake 매출검증
+### 4.4 Snowflake 매출검증
 
 ```
 □ SALE_TYPE IN ('N','T') 필터 적용? (DW_SALE 사용 시)
@@ -642,15 +857,15 @@ vercel --prod --yes
 
 ---
 
-## 11. 기준월 변경 원칙 (v5.0 추가)
+## 10. 기준월 변경 원칙 (v5.0 추가)
 
-### 11.1 기준월 정의
+### 5.1 기준월 정의
 
 **기준월**: 보고서 작성 대상 월 (예: 26년 1월)
 
 대시보드는 기준월을 중심으로 전월 대비(MoM) 및 전년동월 대비(YoY) 비교를 수행합니다.
 
-### 11.2 비교 기준 체계
+### 4.2 비교 기준 체계
 
 | 페이지 | 비교 대상 | 증감 기준 | 비율 기준 | 예시 (기준월: 26년 1월) |
 |:---|:---|:---|:---|:---|
@@ -660,9 +875,9 @@ vercel --prod --yes
 | **경영요약** | 당월 vs 전월/전년 | 전월(MoM) | 전년동월(YoY) | 증감=MoM, 비율=YoY |
 | **손익계산서** | 당기 vs 전기 | - | 전년동기 | 1~N월 누계 |
 
-### 11.3 데이터 구조 확장
+### 4.3 데이터 구조 확장
 
-#### 11.3.1 FinancialValue 타입 (financialData 필드)
+#### 10.3.1 FinancialValue 타입 (financialData 필드)
 
 ```typescript
 interface FinancialValue {
@@ -683,7 +898,7 @@ interface FinancialValue {
 }
 ```
 
-#### 11.3.2 BalanceSheetItem 타입 (balanceSheet 필드)
+#### 10.3.2 BalanceSheetItem 타입 (balanceSheet 필드)
 
 ```typescript
 interface BalanceSheetItem {
@@ -702,7 +917,7 @@ interface BalanceSheetItem {
 - `{월코드}{연도}` 형식: jan25, dec25, jan26 등
 - 기준월이 바뀌면 필드명도 변경: feb26 기준 → jan26, jan25, feb26
 
-#### 11.3.3 CreditVerification 타입 (여신검증)
+#### 10.3.3 CreditVerification 타입 (여신검증)
 
 ```typescript
 interface CreditVerificationItem {
@@ -720,9 +935,9 @@ interface CreditVerificationItem {
 
 **원칙**: 기준월 포함 최근 3개월 매출 표시
 
-### 11.4 재무비율 계산 원칙
+### 4.4 재무비율 계산 원칙
 
-#### 11.4.1 수익성 지표 (연환산)
+#### 10.4.1 수익성 지표 (연환산)
 
 ```javascript
 // 매출총이익률, 영업이익률: 월 데이터 그대로 사용
@@ -742,7 +957,7 @@ ROA = netIncome / avgAssets × 100
 - 1월 데이터는 1개월치이므로 연간 수익성을 추정하려면 12배 필요
 - 전년동월 비교 시에도 동일하게 연환산 적용
 
-#### 11.4.2 안정성 지표
+#### 10.4.2 안정성 지표
 
 ```javascript
 // 부채비율, 자기자본비율: 시점 잔액 기준 (연환산 불필요)
@@ -754,7 +969,7 @@ netDebt = 차입금 - 현금
 netDebtRatio = netDebt / 자기자본 × 100
 ```
 
-#### 11.4.3 활동성 지표 (연환산)
+#### 10.4.3 활동성 지표 (연환산)
 
 ```javascript
 // 회전율: 월 매출/원가를 12배하여 연환산
@@ -779,9 +994,9 @@ CCC = DSO + DIO - DPO
 - 당월: (26.1월 + 25.12월) / 2
 - 전년: 25.1월 잔액 (24.12월 데이터 없으므로)
 
-### 11.5 UI 표시 원칙
+### 4.5 UI 표시 원칙
 
-#### 11.5.1 경영요약 (page.tsx)
+#### 10.5.1 경영요약 (page.tsx)
 
 **KPI 카드**:
 - 주 지표: 당월 값
@@ -801,7 +1016,7 @@ CCC = DSO + DIO - DPO
 - 매출/영업이익: YoY 성장률 강조
 - 영업이익률: 전년 → 당년 추이
 
-#### 11.5.2 재무상태표 (balance-sheet/page.tsx)
+#### 10.5.2 재무상태표 (balance-sheet/page.tsx)
 
 **3개월 비교 테이블**:
 
@@ -813,7 +1028,7 @@ CCC = DSO + DIO - DPO
 - 월간증감: jan26 - dec25 (MoM)
 - 연간증감: jan26 - jan25 (YoY)
 
-#### 11.5.3 여신검증 (balance-sheet/page.tsx)
+#### 10.5.3 여신검증 (balance-sheet/page.tsx)
 
 **테이블 헤더**: 기준월 포함 최근 3개월
 
@@ -822,7 +1037,7 @@ CCC = DSO + DIO - DPO
 
 **기준월 변경 시**: oct/nov/dec → nov/dec/jan
 
-#### 11.5.4 효율성 분석
+#### 10.5.4 효율성 분석
 
 **테이블 헤더**: 전년 vs 당년
 
@@ -830,7 +1045,7 @@ CCC = DSO + DIO - DPO
 |:---|---:|---:|---:|
 | DSO | 56일 | 28일 | -28일 |
 
-### 11.6 JSON 파일 작성 체크리스트
+### 12.6 JSON 파일 작성 체크리스트
 
 **기준월: 26년 1월 기준**
 
@@ -900,7 +1115,7 @@ CCC = DSO + DIO - DPO
 
 **필수**: 전년동월 JSON이 없으면 YoY 비교 불가
 
-### 11.7 기준월 변경 시 작업 순서
+### 12.7 기준월 변경 시 작업 순서
 
 1. **전년동월 JSON 확인/생성**
    - `2025-01.json` 존재 여부 확인
@@ -927,7 +1142,7 @@ CCC = DSO + DIO - DPO
    - YoY 계산: yoyChange = jan26 - jan25
    - NaN 체크: formatNumber/formatPercent에 null 처리
 
-### 11.8 주의사항
+### 12.8 주의사항
 
 1. **필드명 일관성**
    - 기준월이 바뀌면 JSON 필드명도 변경 (jan26 → feb26)
@@ -947,7 +1162,7 @@ CCC = DSO + DIO - DPO
 
 ---
 
-## 12. 버전 이력
+## 11. 버전 이력
 
 | 날짜 | 버전 | 변경 내용 |
 |:---|:---:|:---|
@@ -972,7 +1187,14 @@ CCC = DSO + DIO - DPO
 | | | - 연환산 계산 원칙 (수익성/활동성 지표 × 12) |
 | | | - 여신검증 최근 3개월 매출 표시 |
 | | | - JSON 필드명 규칙 및 작업 체크리스트 |
+| 2026-02-11 | 6.0 | **데이터 처리 흐름 (Data Pipeline) 추가** |
+| | | - 섹션 3: 손익계산서 → 재무상태표 → 재무비율 → 경영요약 프로세스 명시화 |
+| | | - incomeStatement.ratio 값 사용 원칙 정립 (소수점 오차 방지) |
+| | | - 경영요약 계산 로직 상세 설명 (수익성/안정성/활동성) |
+| | | - previousMonth vs previousYear 구분 명확화 |
+| | | - 데이터 일관성 체크리스트 추가 |
+| | | - TypeScript optional 필드 처리 가이드 |
 
 ---
 
-*Generated by Claude - FNF Dashboard Monthly Update Guide v5.0*
+*Generated by Claude - FNF Dashboard Monthly Update Guide v6.0*
