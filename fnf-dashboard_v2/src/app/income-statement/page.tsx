@@ -185,20 +185,22 @@ export default function IncomeStatementPage() {
               ))}
 
               {/* 매출총이익 */}
-              <TableRow className="bg-emerald-50 border-t border-emerald-200">
-                <TableCell className="pl-6 font-bold text-emerald-800 py-3">{incomeStatement.grossProfit.label}</TableCell>
-                <TableCell className="text-right font-bold text-emerald-800 text-lg">{formatNumber(incomeStatement.grossProfit.current)}</TableCell>
-                <TableCell className="text-right text-slate-500 font-medium">{formatNumber(incomeStatement.grossProfit.previous)}</TableCell>
-                <TableCell className="text-right font-bold text-emerald-600">
-                  {incomeStatement.grossProfit.change > 0 ? '+' : ''}{formatNumber(incomeStatement.grossProfit.change)}
-                </TableCell>
-                <TableCell className="text-right font-bold text-emerald-600">
-                  {incomeStatement.grossProfit.changePercent > 0 ? '+' : ''}{incomeStatement.grossProfit.changePercent.toFixed(1)}%
-                </TableCell>
-                <TableCell className="text-right font-bold text-emerald-800">
-                  {incomeStatement.grossProfit.ratio?.toFixed(1)}%
-                </TableCell>
-              </TableRow>
+              {incomeStatement.grossProfit && (
+                <TableRow className="bg-emerald-50 border-t border-emerald-200">
+                  <TableCell className="pl-6 font-bold text-emerald-800 py-3">{incomeStatement.grossProfit.label}</TableCell>
+                  <TableCell className="text-right font-bold text-emerald-800 text-lg">{formatNumber(incomeStatement.grossProfit.current)}</TableCell>
+                  <TableCell className="text-right text-slate-500 font-medium">{formatNumber(incomeStatement.grossProfit.previous)}</TableCell>
+                  <TableCell className="text-right font-bold text-emerald-600">
+                    {incomeStatement.grossProfit.change > 0 ? '+' : ''}{formatNumber(incomeStatement.grossProfit.change)}
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-emerald-600">
+                    {incomeStatement.grossProfit.changePercent > 0 ? '+' : ''}{incomeStatement.grossProfit.changePercent.toFixed(1)}%
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-emerald-800">
+                    {incomeStatement.grossProfit.ratio?.toFixed(1)}%
+                  </TableCell>
+                </TableRow>
+              )}
 
               {/* 영업이익 */}
               <TableRow className="bg-blue-50 border-t-2 border-blue-200">
