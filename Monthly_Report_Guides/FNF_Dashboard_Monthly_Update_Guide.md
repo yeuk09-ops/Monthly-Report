@@ -1,7 +1,7 @@
 # FNF 재무제표 대시보드 월간 업데이트 가이드
 
-**작성일**: 2025년 1월
-**버전**: 3.0
+**작성일**: 2026년 2월
+**버전**: 5.0
 **대시보드 URL**: https://fnf-dashboard.vercel.app
 
 ---
@@ -642,7 +642,312 @@ vercel --prod --yes
 
 ---
 
-## 11. 버전 이력
+## 11. 기준월 변경 원칙 (v5.0 추가)
+
+### 11.1 기준월 정의
+
+**기준월**: 보고서 작성 대상 월 (예: 26년 1월)
+
+대시보드는 기준월을 중심으로 전월 대비(MoM) 및 전년동월 대비(YoY) 비교를 수행합니다.
+
+### 11.2 비교 기준 체계
+
+| 페이지 | 비교 대상 | 증감 기준 | 비율 기준 | 예시 (기준월: 26년 1월) |
+|:---|:---|:---|:---|:---|
+| **재무상태표** | 전년동월 / 전월 / 당월 | 전월(MoM) | 전년동월(YoY) | 25.1월 / 25.12월 / 26.1월 |
+| **여신검증** | 최근 3개월 매출 | 기준월 포함 | - | 11월, 12월, 1월 |
+| **효율성 분석** | 전년 vs 당년 | 전년동월 | 전년동월 | 25년 vs 26년 |
+| **경영요약** | 당월 vs 전월/전년 | 전월(MoM) | 전년동월(YoY) | 증감=MoM, 비율=YoY |
+| **손익계산서** | 당기 vs 전기 | - | 전년동기 | 1~N월 누계 |
+
+### 11.3 데이터 구조 확장
+
+#### 11.3.1 FinancialValue 타입 (financialData 필드)
+
+```typescript
+interface FinancialValue {
+  current: number;        // 당월 (기준월)
+  previousMonth: number;  // 전월 (MoM 증감 계산용)
+  previousYear: number;   // 전년동월 (YoY 비교용)
+}
+```
+
+**예시** (기준월: 26년 1월):
+```json
+{
+  "revenue": {
+    "current": 1639,        // 26년 1월
+    "previousMonth": 1644,  // 25년 12월
+    "previousYear": 1062    // 25년 1월
+  }
+}
+```
+
+#### 11.3.2 BalanceSheetItem 타입 (balanceSheet 필드)
+
+```typescript
+interface BalanceSheetItem {
+  label: string;
+  jan25: number;           // 전년동월 (YoY 비교)
+  dec25: number;           // 전월 (MoM 기준)
+  jan26: number;           // 당월 (기준월)
+  momChange: number;       // 월간 증감 (jan26 - dec25)
+  momChangePercent: number;
+  yoyChange: number;       // 연간 증감 (jan26 - jan25)
+  yoyChangePercent: number;
+}
+```
+
+**필드명 규칙**:
+- `{월코드}{연도}` 형식: jan25, dec25, jan26 등
+- 기준월이 바뀌면 필드명도 변경: feb26 기준 → jan26, jan25, feb26
+
+#### 11.3.3 CreditVerification 타입 (여신검증)
+
+```typescript
+interface CreditVerificationItem {
+  channel: string;
+  nov: number;    // 기준월 -2개월 (11월)
+  dec: number;    // 기준월 -1개월 (12월)
+  jan: number;    // 기준월 (1월)
+  arBalance: number;
+  creditLimit: number;
+  utilizationRate: number;
+  status: string;
+  notes: string[];
+}
+```
+
+**원칙**: 기준월 포함 최근 3개월 매출 표시
+
+### 11.4 재무비율 계산 원칙
+
+#### 11.4.1 수익성 지표 (연환산)
+
+```javascript
+// 매출총이익률, 영업이익률: 월 데이터 그대로 사용
+grossMargin = (매출액 - 매출원가) / 매출액 × 100
+opMargin = 영업이익 / 매출액 × 100
+
+// ROE, ROA: 월 데이터를 12배하여 연환산
+avgEquity = (당월자기자본 + 전월자기자본) / 2
+netIncome = 월영업이익 × 0.8 × 12  // 연환산 당기순이익
+ROE = netIncome / avgEquity × 100
+
+avgAssets = (당월총자산 + 전월총자산) / 2
+ROA = netIncome / avgAssets × 100
+```
+
+**중요**:
+- 1월 데이터는 1개월치이므로 연간 수익성을 추정하려면 12배 필요
+- 전년동월 비교 시에도 동일하게 연환산 적용
+
+#### 11.4.2 안정성 지표
+
+```javascript
+// 부채비율, 자기자본비율: 시점 잔액 기준 (연환산 불필요)
+debtRatio = 총부채 / 자기자본 × 100
+equityRatio = 자기자본 / 총자산 × 100
+
+// 순차입금비율: 순차입금도 시점 잔액
+netDebt = 차입금 - 현금
+netDebtRatio = netDebt / 자기자본 × 100
+```
+
+#### 11.4.3 활동성 지표 (연환산)
+
+```javascript
+// 회전율: 월 매출/원가를 12배하여 연환산
+avgReceivables = (당월매출채권 + 전월매출채권) / 2
+receivablesTurnover = (월매출액 × 12) / avgReceivables
+
+// 회전일수: 연환산 회전율 기준
+DSO = 365 / receivablesTurnover
+
+// 재고회전율, 매입채무회전율도 동일
+inventoryTurnover = (월매출원가 × 12) / avgInventory
+DIO = 365 / inventoryTurnover
+
+payablesTurnover = (월매출원가 × 12) / avgPayables
+DPO = 365 / payablesTurnover
+
+// CCC (현금전환주기)
+CCC = DSO + DIO - DPO
+```
+
+**전년동월 비교 시 평균 계산**:
+- 당월: (26.1월 + 25.12월) / 2
+- 전년: 25.1월 잔액 (24.12월 데이터 없으므로)
+
+### 11.5 UI 표시 원칙
+
+#### 11.5.1 경영요약 (page.tsx)
+
+**KPI 카드**:
+- 주 지표: 당월 값
+- 부 지표: MoM 증감 + YoY 비율
+
+```tsx
+<p className="text-2xl">{formatNumber(d.totalAssets.current)}억</p>
+<p className="text-xs">
+  전월 대비 {formatNumber(assetMomChange)}억 ({assetMomChangePercent.toFixed(1)}%)
+</p>
+<p className="text-xs text-slate-400">
+  전년 동기 대비 {assetYoyChangePercent.toFixed(1)}%
+</p>
+```
+
+**수익성 분석**:
+- 매출/영업이익: YoY 성장률 강조
+- 영업이익률: 전년 → 당년 추이
+
+#### 11.5.2 재무상태표 (balance-sheet/page.tsx)
+
+**3개월 비교 테이블**:
+
+| 항목 | 25년 1월 | 25년 12월 | 26년 1월 | 월간증감 | 연간증감 (YoY) |
+|:---|---:|---:|---:|---:|---:|
+| 현금 | 990 | 2,709 | 3,158 | +449 | +2,168 (219.0%) |
+
+**증감 컬럼**:
+- 월간증감: jan26 - dec25 (MoM)
+- 연간증감: jan26 - jan25 (YoY)
+
+#### 11.5.3 여신검증 (balance-sheet/page.tsx)
+
+**테이블 헤더**: 기준월 포함 최근 3개월
+
+| 채널 | 11월 | 12월 | 1월 | AR잔액 | 여신한도 | 이용률 |
+|:---|---:|---:|---:|---:|---:|---:|
+
+**기준월 변경 시**: oct/nov/dec → nov/dec/jan
+
+#### 11.5.4 효율성 분석
+
+**테이블 헤더**: 전년 vs 당년
+
+| 지표 | 25년 1월 | 26년 1월 | 증감 |
+|:---|---:|---:|---:|
+| DSO | 56일 | 28일 | -28일 |
+
+### 11.6 JSON 파일 작성 체크리스트
+
+**기준월: 26년 1월 기준**
+
+#### 2026-01.json 필수 필드:
+
+```json
+{
+  "meta": {
+    "year": 2026,
+    "month": 1,
+    "reportDate": "2026-01-31"
+  },
+  "financialData": {
+    "revenue": {
+      "current": 1639,        // 26.1월
+      "previousMonth": 1644,  // 25.12월
+      "previousYear": 1062    // 25.1월
+    },
+    // 모든 financialData 필드에 동일 구조
+  },
+  "balanceSheet": {
+    "assets": [
+      {
+        "label": "현금및현금성자산",
+        "jan25": 990,
+        "dec25": 2709,
+        "jan26": 3158,
+        "momChange": 449,
+        "momChangePercent": 16.6,
+        "yoyChange": 2168,
+        "yoyChangePercent": 219.0
+      }
+    ],
+    "totals": [
+      { "label": "총자산", "jan25": 20267, "dec25": 22155, "jan26": 22938, ... },
+      { "label": "총부채", "jan25": 4910, "dec25": 3923, "jan26": 4292, ... },
+      { "label": "총자본", "jan25": 15357, "dec25": 18232, "jan26": 18646, ... }
+    ]
+  },
+  "creditVerification": [
+    {
+      "channel": "국내",
+      "nov": 850,   // 11월
+      "dec": 747,   // 12월
+      "jan": 748,   // 1월
+      ...
+    }
+  ]
+}
+```
+
+#### 2025-01.json (전년동월 데이터):
+
+```json
+{
+  "meta": { "year": 2025, "month": 1 },
+  "financialData": {
+    "revenue": { "current": 1062, "previous": 0 }
+  },
+  "balanceSheet": {
+    "assets": [
+      { "label": "현금및현금성자산", "current": 990, "previous": 0 }
+    ]
+  }
+}
+```
+
+**필수**: 전년동월 JSON이 없으면 YoY 비교 불가
+
+### 11.7 기준월 변경 시 작업 순서
+
+1. **전년동월 JSON 확인/생성**
+   - `2025-01.json` 존재 여부 확인
+   - 없으면 CSV + Snowflake에서 생성
+
+2. **당월 JSON 구조 확장**
+   - `financialData`: `previous` → `previousMonth`, `previousYear`
+   - `balanceSheet`: 3개월 필드 추가 (jan25, dec25, jan26)
+   - `creditVerification`: 3개월 매출 업데이트 (nov, dec, jan)
+
+3. **UI 컴포넌트 업데이트**
+   - `page.tsx`: MoM/YoY 계산 로직 분리
+   - `balance-sheet/page.tsx`: 3개월 비교 테이블
+   - 모든 테이블 헤더: 월별 명시 (11월, 12월, 1월)
+
+4. **연환산 계산 적용**
+   - ROE, ROA: × 12
+   - 회전율: × 12
+   - 안정성 지표: 연환산 불필요 (시점 잔액)
+
+5. **검증**
+   - 합계 일치: 자산 = 부채 + 자본
+   - 증감 계산: momChange = jan26 - dec25
+   - YoY 계산: yoyChange = jan26 - jan25
+   - NaN 체크: formatNumber/formatPercent에 null 처리
+
+### 11.8 주의사항
+
+1. **필드명 일관성**
+   - 기준월이 바뀌면 JSON 필드명도 변경 (jan26 → feb26)
+   - 하위 호환성 고려 시 기존 필드 유지 가능
+
+2. **전년 데이터 부족 시**
+   - 전년 12월 데이터 없으면 전년 1월만 사용
+   - 평균 계산 불가 시 기말 잔액 사용
+
+3. **연환산 주의**
+   - 수익성/활동성 지표: 반드시 × 12
+   - 안정성 지표: 시점 잔액이므로 × 12 불필요
+
+4. **NaN 방지**
+   - 모든 formatNumber, formatPercent에 null/NaN 체크
+   - RatioCard 컴포넌트에 isNaN 처리
+
+---
+
+## 12. 버전 이력
 
 | 날짜 | 버전 | 변경 내용 |
 |:---|:---:|:---|
@@ -660,7 +965,14 @@ vercel --prod --yes
 | | | - 재무상태표: CSV 월별재무제표 사용 |
 | | | - 월별 JSON 파일 기반 대시보드 v2 구조 반영 |
 | | | 검증 스크립트 추가 (verify_dec.py, verify_dec_channel.py) |
+| 2026-02-10 | 5.0 | **기준월 변경 원칙 추가** |
+| | | - MoM vs YoY 비교 체계 정립 |
+| | | - 재무상태표 3개월 비교 구조 (전년동월/전월/당월) |
+| | | - financialData 구조 확장 (previousMonth, previousYear) |
+| | | - 연환산 계산 원칙 (수익성/활동성 지표 × 12) |
+| | | - 여신검증 최근 3개월 매출 표시 |
+| | | - JSON 필드명 규칙 및 작업 체크리스트 |
 
 ---
 
-*Generated by Claude - FNF Dashboard Monthly Update Guide v4.0*
+*Generated by Claude - FNF Dashboard Monthly Update Guide v5.0*

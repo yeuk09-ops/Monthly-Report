@@ -16,6 +16,9 @@ export function RatioCard({
   positiveGood = true,
 }: RatioCardProps) {
   const formatValue = (val: number) => {
+    if (val === null || val === undefined || isNaN(val) || !isFinite(val)) {
+      return '-';
+    }
     switch (format) {
       case 'times':
         return `${val.toFixed(1)}회`;

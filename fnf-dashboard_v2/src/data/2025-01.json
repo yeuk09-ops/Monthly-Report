@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "year": 2025,
+    "month": 1,
+    "reportDate": "2025-01-31",
+    "updatedAt": "2026-02-10",
+    "status": "published"
+  },
+  "financialData": {
+    "revenue": { "current": 1062, "previous": 0 },
+    "domesticRevenue": { "current": 483, "previous": 0 },
+    "exportRevenue": { "current": 578, "previous": 0 },
+    "cogs": { "current": 582, "previous": 0 },
+    "sga": { "current": 0, "previous": 0 },
+    "operatingProfit": { "current": 542, "previous": 0 },
+    "totalAssets": { "current": 20267, "previous": 0 },
+    "currentAssets": { "current": 5051, "previous": 0 },
+    "cash": { "current": 990, "previous": 0 },
+    "receivables": { "current": 1970, "previous": 0 },
+    "inventory": { "current": 2101, "previous": 0 },
+    "totalLiabilities": { "current": 4910, "previous": 0 },
+    "currentLiabilities": { "current": 3328, "previous": 0 },
+    "borrowings": { "current": 200, "previous": 0 },
+    "payables": { "current": 821, "previous": 0 },
+    "equity": { "current": 15357, "previous": 0 },
+    "retainedEarnings": { "current": 12645, "previous": 0 }
+  },
+  "incomeStatement": {
+    "revenue": [
+      { "label": "택가", "current": 3049, "previous": 0, "change": 0, "changePercent": 0, "ratio": 287.2 },
+      { "label": "실판매출(V+)", "current": 1644, "previous": 0, "change": 0, "changePercent": 0, "ratio": 154.8 },
+      { "label": "실판매출(V-)", "current": 1062, "previous": 0, "change": 0, "changePercent": 0, "ratio": 100.0 },
+      { "label": "- 국내매출", "current": 483, "previous": 0, "change": 0, "changePercent": 0, "ratio": 45.5 },
+      { "label": "- 수출매출", "current": 578, "previous": 0, "change": 0, "changePercent": 0, "ratio": 54.4 },
+      { "label": "할인율", "current": 65.2, "previous": 0, "change": 0, "changePercent": 0, "isPercentage": true }
+    ],
+    "costs": [
+      { "label": "매출원가", "current": 582, "previous": 0, "change": 0, "changePercent": 0, "ratio": 54.8 },
+      { "label": "점수수료", "current": 163, "previous": 0, "change": 0, "changePercent": 0, "ratio": 15.3 },
+      { "label": "직접비(할인+간접할인)", "current": 246, "previous": 0, "change": 0, "changePercent": 0, "ratio": 23.2 },
+      { "label": "간접비", "current": 110, "previous": 0, "change": 0, "changePercent": 0, "ratio": 10.4, "note": "월별 미제공" }
+    ],
+    "operatingProfit": {
+      "label": "영업이익",
+      "current": 542,
+      "previous": 0,
+      "change": 0,
+      "changePercent": 0,
+      "ratio": 51.0,
+      "note": "= 매출총이익 - 점수수료 - 직접비 - 간접비"
+    },
+    "grossProfit": {
+      "label": "매출총이익",
+      "current": 1062,
+      "previous": 0,
+      "change": 0,
+      "changePercent": 0,
+      "ratio": 100.0
+    }
+  },
+  "balanceSheet": {
+    "assets": [
+      { "label": "현금및현금성자산", "current": 990, "previous": 0, "change": 0, "changePercent": 0, "isAlwaysVisible": true },
+      { "label": "매출채권", "current": 1970, "previous": 0, "change": 0, "changePercent": 0, "isAlwaysVisible": true },
+      { "label": "재고자산", "current": 2101, "previous": 0, "change": 0, "changePercent": 0, "isAlwaysVisible": true },
+      { "label": "(재고자산 평가충당금)", "current": -116, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "투자자산", "current": 6750, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "유무형자산", "current": 6093, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "사용권자산", "current": 1529, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "기타채권", "current": 519, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "기타자산", "current": 315, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true }
+    ],
+    "liabilities": [
+      { "label": "매입채무", "current": 821, "previous": 0, "change": 0, "changePercent": 0, "isAlwaysVisible": true },
+      { "label": "미지급금", "current": 360, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "차입금", "current": 200, "previous": 0, "change": 0, "changePercent": 0, "isAlwaysVisible": true },
+      { "label": "법인세부채", "current": 811, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "리스부채", "current": 1582, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "퇴직급여/충당부채", "current": 75, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "기타부채", "current": 1060, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true }
+    ],
+    "equity": [
+      { "label": "자본금", "current": 38, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "자본잉여금", "current": 3199, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "이익잉여금", "current": 12645, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true },
+      { "label": "(자기주식)", "current": -525, "previous": 0, "change": 0, "changePercent": 0, "isSubItem": true }
+    ],
+    "totals": [
+      { "label": "총자산", "current": 20267, "previous": 0, "change": 0, "changePercent": 0 },
+      { "label": "총부채", "current": 4910, "previous": 0, "change": 0, "changePercent": 0 },
+      { "label": "총자본", "current": 15357, "previous": 0, "change": 0, "changePercent": 0 }
+    ]
+  },
+  "workingCapital": {
+    "current": 1724,
+    "previous": 0,
+    "change": 0,
+    "changePercent": 0,
+    "currentAssets": 5051,
+    "currentLiabilities": 3328,
+    "currentRatio": 151.8,
+    "debtRatio": 24.2,
+    "equityRatio": 75.8
+  },
+  "creditVerification": [
+    {
+      "channel": "국내",
+      "oct": 1055,
+      "nov": 850,
+      "dec": 747,
+      "arBalance": 980,
+      "creditLimit": 1250,
+      "utilizationRate": 78.4,
+      "status": "정상",
+      "notes": ["적정 여신 수준 유지", "월별 매출 감소 추세"]
+    },
+    {
+      "channel": "수출",
+      "oct": 946,
+      "nov": 947,
+      "dec": 891,
+      "arBalance": 1370,
+      "creditLimit": 1800,
+      "utilizationRate": 76.1,
+      "status": "정상",
+      "notes": ["안정적 수출 매출", "여신한도 여유"]
+    }
+  ],
+  "efficiency": {
+    "currentYear": {
+      "year": 2025,
+      "arTurnover": 6.5,
+      "inventoryTurnover": 4.2,
+      "arDays": 56,
+      "inventoryDays": 87,
+      "cashCycle": 143
+    },
+    "previousYear": {
+      "year": 2024,
+      "arTurnover": 6.2,
+      "inventoryTurnover": 4.0,
+      "arDays": 59,
+      "inventoryDays": 91,
+      "cashCycle": 150
+    }
+  },
+  "aiInsights": {
+    "positive": [
+      "운전자본 1,724억원으로 <strong>전년 대비 안정적 수준 유지</strong>",
+      "수출매출 578억원으로 <strong>전체 매출의 54.4% 차지</strong>",
+      "영업이익률 51.0%로 <strong>높은 수익성 유지</strong>"
+    ],
+    "concern": [
+      "높은 할인율(65.2%)로 <strong>수익성 압박 요인</strong>",
+      "차입금 200억원 존재로 <strong>재무비용 발생</strong>"
+    ],
+    "action": [
+      "국내 매출 확대 전략 필요 (현재 45.5%)",
+      "할인율 관리를 통한 마진 개선",
+      "차입금 상환 계획 수립"
+    ]
+  }
+}
