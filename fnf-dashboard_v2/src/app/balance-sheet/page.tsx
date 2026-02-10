@@ -316,17 +316,45 @@ export default function BalanceSheetPage() {
                 <TableCell className="font-semibold">매입채무</TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.payables.previousMonth)}</TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.payables.current)}</TableCell>
-                <TableCell className="text-right font-semibold text-emerald-600">{financialData.payables.current - financialData.payables.previousMonth > 0 ? '+' : ''}{formatNumber(financialData.payables.current - financialData.payables.previousMonth)}</TableCell>
-                <TableCell className="text-right font-semibold text-emerald-600">{((financialData.payables.current - financialData.payables.previousMonth) / financialData.payables.previousMonth * 100) > 0 ? '+' : ''}{((financialData.payables.current - financialData.payables.previousMonth) / financialData.payables.previousMonth * 100).toFixed(1)}%</TableCell>
+                <TableCell className="text-right font-semibold text-emerald-600">
+                  {financialData.payables.previousMonth !== undefined && financialData.payables.current - financialData.payables.previousMonth > 0 ? '+' : ''}
+                  {financialData.payables.previousMonth !== undefined ? formatNumber(financialData.payables.current - financialData.payables.previousMonth) : '-'}
+                </TableCell>
+                <TableCell className="text-right font-semibold text-emerald-600">
+                  {financialData.payables.previousMonth !== undefined ? (
+                    <>
+                      {((financialData.payables.current - financialData.payables.previousMonth) / financialData.payables.previousMonth * 100) > 0 ? '+' : ''}
+                      {((financialData.payables.current - financialData.payables.previousMonth) / financialData.payables.previousMonth * 100).toFixed(1)}%
+                    </>
+                  ) : '-'}
+                </TableCell>
               </TableRow>
 
               {/* 순운전자본 */}
               <TableRow className="bg-amber-100 font-bold">
                 <TableCell className="text-center">순운전자본 (AR+INV−AP)</TableCell>
-                <TableCell className="text-right">{formatNumber(financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)}</TableCell>
+                <TableCell className="text-right">
+                  {financialData.receivables.previousMonth !== undefined && financialData.inventory.previousMonth !== undefined && financialData.payables.previousMonth !== undefined
+                    ? formatNumber(financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)
+                    : '-'}
+                </TableCell>
                 <TableCell className="text-right">{formatNumber(financialData.receivables.current + financialData.inventory.current - financialData.payables.current)}</TableCell>
-                <TableCell className="text-right text-red-600">{((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) > 0 ? '+' : ''}{formatNumber((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth))}</TableCell>
-                <TableCell className="text-right text-red-600">{(((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) / (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth) * 100) > 0 ? '+' : ''}{(((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) / (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth) * 100).toFixed(1)}%</TableCell>
+                <TableCell className="text-right text-red-600">
+                  {financialData.receivables.previousMonth !== undefined && financialData.inventory.previousMonth !== undefined && financialData.payables.previousMonth !== undefined ? (
+                    <>
+                      {((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) > 0 ? '+' : ''}
+                      {formatNumber((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth))}
+                    </>
+                  ) : '-'}
+                </TableCell>
+                <TableCell className="text-right text-red-600">
+                  {financialData.receivables.previousMonth !== undefined && financialData.inventory.previousMonth !== undefined && financialData.payables.previousMonth !== undefined ? (
+                    <>
+                      {(((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) / (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth) * 100) > 0 ? '+' : ''}
+                      {(((financialData.receivables.current + financialData.inventory.current - financialData.payables.current) - (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth)) / (financialData.receivables.previousMonth + financialData.inventory.previousMonth - financialData.payables.previousMonth) * 100).toFixed(1)}%
+                    </>
+                  ) : '-'}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
