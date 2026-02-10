@@ -144,9 +144,10 @@ export interface WorkingCapital {
 // 여신검증
 export interface CreditVerificationItem {
   channel: string;
-  oct: number;
+  oct?: number;
   nov: number;
   dec: number;
+  jan?: number;
   arBalance: number;
   arRatio: number;
   months: number;
