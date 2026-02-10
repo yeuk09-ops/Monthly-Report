@@ -470,15 +470,31 @@ export default function BalanceSheetPage() {
         <Card className="border-l-4 border-l-blue-500">
           <CardContent className="pt-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">부채비율</h3>
-            <p className="text-2xl font-bold text-slate-800">{((balanceSheet.totals[1].jan26 / balanceSheet.totals[2].jan26) * 100).toFixed(1)}%</p>
-            <p className="text-sm text-emerald-600">전월 {((balanceSheet.totals[1].dec25 / balanceSheet.totals[2].dec25) * 100).toFixed(1)}% → △{(((balanceSheet.totals[1].dec25 / balanceSheet.totals[2].dec25) * 100) - ((balanceSheet.totals[1].jan26 / balanceSheet.totals[2].jan26) * 100)).toFixed(1)}%p 개선</p>
+            <p className="text-2xl font-bold text-slate-800">
+              {balanceSheet.totals[1].jan26 && balanceSheet.totals[2].jan26
+                ? ((balanceSheet.totals[1].jan26 / balanceSheet.totals[2].jan26) * 100).toFixed(1) + '%'
+                : '-'}
+            </p>
+            <p className="text-sm text-emerald-600">
+              {balanceSheet.totals[1].dec25 && balanceSheet.totals[2].dec25 && balanceSheet.totals[1].jan26 && balanceSheet.totals[2].jan26
+                ? `전월 ${((balanceSheet.totals[1].dec25 / balanceSheet.totals[2].dec25) * 100).toFixed(1)}% → △${(((balanceSheet.totals[1].dec25 / balanceSheet.totals[2].dec25) * 100) - ((balanceSheet.totals[1].jan26 / balanceSheet.totals[2].jan26) * 100)).toFixed(1)}%p 개선`
+                : '-'}
+            </p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-emerald-500">
           <CardContent className="pt-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">자기자본비율</h3>
-            <p className="text-2xl font-bold text-slate-800">{((balanceSheet.totals[2].jan26 / balanceSheet.totals[0].jan26) * 100).toFixed(1)}%</p>
-            <p className="text-sm text-emerald-600">전월 {((balanceSheet.totals[2].dec25 / balanceSheet.totals[0].dec25) * 100).toFixed(1)}% → +{(((balanceSheet.totals[2].jan26 / balanceSheet.totals[0].jan26) * 100) - ((balanceSheet.totals[2].dec25 / balanceSheet.totals[0].dec25) * 100)).toFixed(1)}%p 개선</p>
+            <p className="text-2xl font-bold text-slate-800">
+              {balanceSheet.totals[2].jan26 && balanceSheet.totals[0].jan26
+                ? ((balanceSheet.totals[2].jan26 / balanceSheet.totals[0].jan26) * 100).toFixed(1) + '%'
+                : '-'}
+            </p>
+            <p className="text-sm text-emerald-600">
+              {balanceSheet.totals[2].dec25 && balanceSheet.totals[0].dec25 && balanceSheet.totals[2].jan26 && balanceSheet.totals[0].jan26
+                ? `전월 ${((balanceSheet.totals[2].dec25 / balanceSheet.totals[0].dec25) * 100).toFixed(1)}% → +${(((balanceSheet.totals[2].jan26 / balanceSheet.totals[0].jan26) * 100) - ((balanceSheet.totals[2].dec25 / balanceSheet.totals[0].dec25) * 100)).toFixed(1)}%p 개선`
+                : '-'}
+            </p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-orange-500">
