@@ -45,11 +45,17 @@ export default function IncomeStatementPage() {
 
   // 수익성 지표 계산 (MoM: 전월 대비)
   const grossMargin = ((financialData.revenue.current - financialData.cogs.current) / financialData.revenue.current * 100);
-  const prevGrossMargin = ((financialData.revenue.previousMonth - financialData.cogs.previousMonth) / financialData.revenue.previousMonth * 100);
+  const prevGrossMargin = financialData.revenue.previousMonth && financialData.cogs.previousMonth
+    ? ((financialData.revenue.previousMonth - financialData.cogs.previousMonth) / financialData.revenue.previousMonth * 100)
+    : 0;
   const opMargin = (financialData.operatingProfit.current / financialData.revenue.current * 100);
-  const prevOpMargin = (financialData.operatingProfit.previousMonth / financialData.revenue.previousMonth * 100);
+  const prevOpMargin = financialData.operatingProfit.previousMonth && financialData.revenue.previousMonth
+    ? (financialData.operatingProfit.previousMonth / financialData.revenue.previousMonth * 100)
+    : 0;
   const exportRatio = (financialData.exportRevenue.current / financialData.revenue.current * 100);
-  const prevExportRatio = (financialData.exportRevenue.previousMonth / financialData.revenue.previousMonth * 100);
+  const prevExportRatio = financialData.exportRevenue.previousMonth && financialData.revenue.previousMonth
+    ? (financialData.exportRevenue.previousMonth / financialData.revenue.previousMonth * 100)
+    : 0;
 
   // 채널별 합계
   const channelTotal = {
