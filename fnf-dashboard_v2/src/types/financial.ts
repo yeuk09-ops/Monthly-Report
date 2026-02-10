@@ -85,33 +85,35 @@ export interface BrandSale {
 // 재무상태표 항목
 export interface BalanceSheetItem {
   label: string;
-  dec24: number;
+  jan25?: number;
   dec25: number;
-  change: number;
-  changePercent: number;
+  jan26?: number;
+  dec24?: number;
+  momChange?: number;
+  momChangePercent?: number;
+  yoyChange?: number;
+  yoyChangePercent?: number;
+  change?: number;
+  changePercent?: number;
   isSubItem?: boolean;
   isAlwaysVisible?: boolean;
   highlight?: boolean;
-}
-
-export interface BalanceSheetTotals {
-  assets: { dec24: number; dec25: number };
-  liabilities: { dec24: number; dec25: number };
-  equity: { dec24: number; dec25: number };
 }
 
 export interface BalanceSheet {
   assets: BalanceSheetItem[];
   liabilities: BalanceSheetItem[];
   equity: BalanceSheetItem[];
-  totals: BalanceSheetTotals;
+  totals: BalanceSheetItem[];
 }
 
 // 운전자본
 export interface WorkingCapitalAR {
   label: string;
-  dec24: number;
+  jan25?: number;
   dec25: number;
+  jan26?: number;
+  dec24?: number;
   change: number;
   changePercent: number;
   warning?: boolean;
@@ -119,8 +121,10 @@ export interface WorkingCapitalAR {
 
 export interface WorkingCapitalInventoryItem {
   label: string;
-  dec24: number;
+  jan25?: number;
   dec25: number;
+  jan26?: number;
+  dec24?: number;
   change: number;
   changePercent: number;
 }
