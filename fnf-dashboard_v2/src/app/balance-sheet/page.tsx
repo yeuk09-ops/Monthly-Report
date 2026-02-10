@@ -66,12 +66,14 @@ export default function BalanceSheetPage() {
   const { balanceSheet, workingCapital, creditVerification, financialData } = reportData;
   const { totals } = balanceSheet;
 
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number | undefined) => {
+    if (num === undefined || num === null || isNaN(num) || !isFinite(num)) return '-';
     if (num < 0) return `△${Math.abs(num).toLocaleString('ko-KR')}`;
     return num.toLocaleString('ko-KR');
   };
 
-  const getChangeColor = (change: number, isNegativeGood: boolean = false) => {
+  const getChangeColor = (change: number | undefined, isNegativeGood: boolean = false) => {
+    if (change === undefined || change === null || isNaN(change) || !isFinite(change)) return 'text-gray-600';
     if (change === 0) return 'text-gray-600';
     if (isNegativeGood) return change < 0 ? 'text-emerald-600' : 'text-red-600';
     return change > 0 ? 'text-emerald-600' : 'text-red-600';
@@ -87,8 +89,8 @@ export default function BalanceSheetPage() {
   };
 
   const renderSectionHeader = (
-    sectionKey: string, title: string, jan25: number, dec25: number, jan26: number,
-    momChange: number, momChangePercent: number, yoyChange: number, yoyChangePercent: number, bgClass: string
+    sectionKey: string, title: string, jan25: number | undefined, dec25: number | undefined, jan26: number | undefined,
+    momChange: number | undefined, momChangePercent: number | undefined, yoyChange: number | undefined, yoyChangePercent: number | undefined, bgClass: string
   ) => (
     <TableRow className={`${bgClass} cursor-pointer hover:opacity-90`} onClick={() => toggleSection(sectionKey)}>
       <TableCell className="font-bold flex items-center gap-2">
@@ -99,10 +101,10 @@ export default function BalanceSheetPage() {
       <TableCell className="text-right font-semibold">{formatNumber(dec25)}</TableCell>
       <TableCell className="text-right font-semibold bg-yellow-50/50">{formatNumber(jan26)}</TableCell>
       <TableCell className={`text-right font-semibold ${getChangeColor(momChange)}`}>
-        {momChange > 0 ? '+' : ''}{formatNumber(momChange)}
+        {momChange !== undefined && momChange > 0 ? '+' : ''}{formatNumber(momChange)}
       </TableCell>
       <TableCell className={`text-right font-semibold ${getChangeColor(yoyChange)}`}>
-        {yoyChange > 0 ? '+' : ''}{formatNumber(yoyChange)} ({yoyChangePercent > 0 ? '+' : ''}{yoyChangePercent.toFixed(1)}%)
+        {yoyChange !== undefined && yoyChange > 0 ? '+' : ''}{formatNumber(yoyChange)} ({yoyChangePercent !== undefined && yoyChangePercent > 0 ? '+' : ''}{yoyChangePercent !== undefined ? yoyChangePercent.toFixed(1) : '-'}%)
       </TableCell>
     </TableRow>
   );
@@ -152,10 +154,10 @@ export default function BalanceSheetPage() {
                     <TableCell className="text-right">{formatNumber(item.dec25)}</TableCell>
                     <TableCell className={`text-right ${item.highlight ? 'bg-yellow-50' : ''}`}>{formatNumber(item.jan26)}</TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.momChange)}`}>
-                      {item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
+                      {item.momChange !== undefined && item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
                     </TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.yoyChange)}`}>
-                      {item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent.toFixed(1)}%)
+                      {item.yoyChange !== undefined && item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent !== undefined && item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent !== undefined ? item.yoyChangePercent.toFixed(1) : '-'}%)
                     </TableCell>
                   </TableRow>
                 );
@@ -184,10 +186,10 @@ export default function BalanceSheetPage() {
                     <TableCell className="text-right">{formatNumber(item.dec25)}</TableCell>
                     <TableCell className="text-right">{formatNumber(item.jan26)}</TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.momChange, true)}`}>
-                      {item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
+                      {item.momChange !== undefined && item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
                     </TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.yoyChange, true)}`}>
-                      {item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent.toFixed(1)}%)
+                      {item.yoyChange !== undefined && item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent !== undefined && item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent !== undefined ? item.yoyChangePercent.toFixed(1) : '-'}%)
                     </TableCell>
                   </TableRow>
                 );
@@ -216,10 +218,10 @@ export default function BalanceSheetPage() {
                     <TableCell className="text-right">{formatNumber(item.dec25)}</TableCell>
                     <TableCell className="text-right">{formatNumber(item.jan26)}</TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.momChange)}`}>
-                      {item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
+                      {item.momChange !== undefined && item.momChange > 0 ? '+' : ''}{formatNumber(item.momChange)}
                     </TableCell>
                     <TableCell className={`text-right ${getChangeColor(item.yoyChange)}`}>
-                      {item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent.toFixed(1)}%)
+                      {item.yoyChange !== undefined && item.yoyChange > 0 ? '+' : ''}{formatNumber(item.yoyChange)} ({item.yoyChangePercent !== undefined && item.yoyChangePercent > 0 ? '+' : ''}{item.yoyChangePercent !== undefined ? item.yoyChangePercent.toFixed(1) : '-'}%)
                     </TableCell>
                   </TableRow>
                 );
@@ -261,8 +263,8 @@ export default function BalanceSheetPage() {
                   <TableCell className={`pl-10 ${item.warning ? 'text-orange-700 font-medium' : ''}`}>{item.label}</TableCell>
                   <TableCell className="text-right">{formatNumber(item.dec25)}</TableCell>
                   <TableCell className="text-right">{formatNumber(item.jan26)}</TableCell>
-                  <TableCell className={`text-right ${getChangeColor(item.change)}`}>{item.change > 0 ? '+' : ''}{formatNumber(item.change)}</TableCell>
-                  <TableCell className={`text-right ${getChangeColor(item.changePercent)}`}>{item.changePercent > 0 ? '+' : ''}{item.changePercent.toFixed(1)}%</TableCell>
+                  <TableCell className={`text-right ${getChangeColor(item.change)}`}>{item.change !== undefined && item.change > 0 ? '+' : ''}{formatNumber(item.change)}</TableCell>
+                  <TableCell className={`text-right ${getChangeColor(item.changePercent)}`}>{item.changePercent !== undefined && item.changePercent > 0 ? '+' : ''}{item.changePercent !== undefined ? item.changePercent.toFixed(1) : '-'}%</TableCell>
                 </TableRow>
               ))}
 
@@ -288,8 +290,8 @@ export default function BalanceSheetPage() {
                       <TableCell className="pl-12 text-gray-600">{item.label}</TableCell>
                       <TableCell className="text-right">{item.jan26}</TableCell>
                       <TableCell className="text-right">{item.jan26}</TableCell>
-                      <TableCell className={`text-right ${getChangeColor(item.change)}`}>{item.change > 0 ? '+' : ''}{item.change}</TableCell>
-                      <TableCell className={`text-right ${getChangeColor(item.changePercent)}`}>{item.changePercent > 0 ? '+' : ''}{item.changePercent.toFixed(1)}%</TableCell>
+                      <TableCell className={`text-right ${getChangeColor(item.change)}`}>{item.change !== undefined && item.change > 0 ? '+' : ''}{item.change}</TableCell>
+                      <TableCell className={`text-right ${getChangeColor(item.changePercent)}`}>{item.changePercent !== undefined && item.changePercent > 0 ? '+' : ''}{item.changePercent !== undefined ? item.changePercent.toFixed(1) : '-'}%</TableCell>
                     </TableRow>
                   ))}
                 </Fragment>
