@@ -57,6 +57,7 @@ export interface IncomeStatement {
   revenue: IncomeItem[];
   costs: IncomeItem[];
   operatingProfit: IncomeItem;
+  grossProfit?: IncomeItem;
 }
 
 // 채널별/수출/브랜드별 매출
