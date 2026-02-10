@@ -13,30 +13,32 @@ export default function DashboardPage() {
     if (!reportData) return null;
 
     const d = reportData.financialData;
+    const incomeStmt = reportData.incomeStatement;
 
     const calcGrowth = (curr: number, prev: number) =>
       prev !== 0 ? ((curr - prev) / prev * 100) : 0;
 
-    // 수익성 지표 - MoM (Month-over-Month: 전월 대비)
-    const grossProfit = {
-      current: d.revenue.current - d.cogs.current,
-      previousMonth: d.revenue.previousMonth - d.cogs.previousMonth,
-      previousYear: d.revenue.previousYear - d.cogs.previousYear
-    };
+    // 수익성 지표 - 손익계산서의 ratio 값 사용 (incomeStatement.*.ratio)
+    // incomeStatement의 grossProfit과 operatingProfit에 이미 정확한 ratio가 계산되어 있음
     const grossMargin = {
-      current: (grossProfit.current / d.revenue.current * 100),
-      previousMonth: (grossProfit.previousMonth / d.revenue.previousMonth * 100),
-      previousYear: (grossProfit.previousYear / d.revenue.previousYear * 100)
+      current: incomeStmt.grossProfit?.ratio || (d.revenue.current - d.cogs.current) / d.revenue.current * 100,
+      previousYear: d.revenue.previousYear && d.cogs.previousYear
+        ? ((d.revenue.previousYear - d.cogs.previousYear) / d.revenue.previousYear * 100)
+        : 0
     };
+
     const opMargin = {
-      current: (d.operatingProfit.current / d.revenue.current * 100),
-      previousMonth: (d.operatingProfit.previousMonth / d.revenue.previousMonth * 100),
-      previousYear: (d.operatingProfit.previousYear / d.revenue.previousYear * 100)
+      current: incomeStmt.operatingProfit?.ratio || (d.operatingProfit.current / d.revenue.current * 100),
+      previousYear: d.operatingProfit.previousYear && d.revenue.previousYear
+        ? (d.operatingProfit.previousYear / d.revenue.previousYear * 100)
+        : 0
     };
+
     const exportRatio = {
       current: (d.exportRevenue.current / d.revenue.current * 100),
-      previousMonth: (d.exportRevenue.previousMonth / d.revenue.previousMonth * 100),
-      previousYear: (d.exportRevenue.previousYear / d.revenue.previousYear * 100)
+      previousYear: d.exportRevenue.previousYear && d.revenue.previousYear
+        ? (d.exportRevenue.previousYear / d.revenue.previousYear * 100)
+        : 0
     };
 
     // 안정성 지표 - YoY 기준 (전년동월 대비)
