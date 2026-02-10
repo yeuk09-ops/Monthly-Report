@@ -255,8 +255,12 @@ export default function BalanceSheetPage() {
                 </TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.receivables.previousMonth)}</TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.receivables.current)}</TableCell>
-                <TableCell className="text-right font-semibold text-red-600">+{formatNumber(financialData.receivables.current - financialData.receivables.previousMonth)}</TableCell>
-                <TableCell className="text-right font-semibold text-red-600">+{((financialData.receivables.current - financialData.receivables.previousMonth) / financialData.receivables.previousMonth * 100).toFixed(1)}%</TableCell>
+                <TableCell className="text-right font-semibold text-red-600">
+                  {financialData.receivables.previousMonth !== undefined ? `+${formatNumber(financialData.receivables.current - financialData.receivables.previousMonth)}` : '-'}
+                </TableCell>
+                <TableCell className="text-right font-semibold text-red-600">
+                  {financialData.receivables.previousMonth !== undefined ? `+${((financialData.receivables.current - financialData.receivables.previousMonth) / financialData.receivables.previousMonth * 100).toFixed(1)}%` : '-'}
+                </TableCell>
               </TableRow>
               {expandedSections.arDetail && workingCapital.ar && workingCapital.ar.map((item: any, idx) => (
                 <TableRow key={idx} className={item.warning ? 'bg-orange-50' : 'bg-gray-50'}>
@@ -276,8 +280,18 @@ export default function BalanceSheetPage() {
                 </TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.inventory.previousMonth)}</TableCell>
                 <TableCell className="text-right font-semibold">{formatNumber(financialData.inventory.current)}</TableCell>
-                <TableCell className="text-right font-semibold text-emerald-600">{financialData.inventory.current - financialData.inventory.previousMonth > 0 ? '+' : ''}{formatNumber(financialData.inventory.current - financialData.inventory.previousMonth)}</TableCell>
-                <TableCell className="text-right font-semibold">{((financialData.inventory.current - financialData.inventory.previousMonth) / financialData.inventory.previousMonth * 100) > 0 ? '+' : ''}{((financialData.inventory.current - financialData.inventory.previousMonth) / financialData.inventory.previousMonth * 100).toFixed(1)}%</TableCell>
+                <TableCell className="text-right font-semibold text-emerald-600">
+                  {financialData.inventory.previousMonth !== undefined && financialData.inventory.current - financialData.inventory.previousMonth > 0 ? '+' : ''}
+                  {financialData.inventory.previousMonth !== undefined ? formatNumber(financialData.inventory.current - financialData.inventory.previousMonth) : '-'}
+                </TableCell>
+                <TableCell className="text-right font-semibold">
+                  {financialData.inventory.previousMonth !== undefined ? (
+                    <>
+                      {((financialData.inventory.current - financialData.inventory.previousMonth) / financialData.inventory.previousMonth * 100) > 0 ? '+' : ''}
+                      {((financialData.inventory.current - financialData.inventory.previousMonth) / financialData.inventory.previousMonth * 100).toFixed(1)}%
+                    </>
+                  ) : '-'}
+                </TableCell>
               </TableRow>
               {expandedSections.invDetail && workingCapital.inventory && workingCapital.inventory.map((brand, idx) => (
                 <Fragment key={idx}>
