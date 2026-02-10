@@ -20,6 +20,8 @@ export interface DataIndex {
 export interface FinancialValue {
   current: number;
   previous: number;
+  previousMonth?: number;
+  previousYear?: number;
 }
 
 export interface FinancialData {
