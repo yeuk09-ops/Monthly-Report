@@ -118,7 +118,7 @@ export default function IncomeStatementPage() {
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* 손익계산서 테이블 */}
-      <Card className="shadow-sm border-0 bg-white">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white">
         <CardHeader className="bg-slate-800 text-white rounded-t-lg py-4">
           <CardTitle className="text-lg font-semibold">FNF 손익계산서 (1~{month}월 누계)</CardTitle>
         </CardHeader>
@@ -231,7 +231,7 @@ export default function IncomeStatementPage() {
 
       {/* 수익성 지표 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-blue-500" />
           <CardContent className="pt-5 pb-4">
             <p className="text-sm text-slate-500 font-medium mb-1">매출총이익률</p>
@@ -244,7 +244,7 @@ export default function IncomeStatementPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-emerald-500" />
           <CardContent className="pt-5 pb-4">
             <p className="text-sm text-slate-500 font-medium mb-1">영업이익률</p>
@@ -257,7 +257,7 @@ export default function IncomeStatementPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-orange-500" />
           <CardContent className="pt-5 pb-4">
             <p className="text-sm text-slate-500 font-medium mb-1">수출 비중</p>
@@ -275,7 +275,7 @@ export default function IncomeStatementPage() {
       {/* 채널별 / 수출 지역별 매출 분석 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 채널별 매출 분석 */}
-        <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white">
           <CardHeader className="pb-3 border-b border-slate-100">
             <CardTitle className="text-base font-semibold text-slate-800">채널별 매출 분석</CardTitle>
             <p className="text-xs text-slate-500 mt-1">국내 채널 + 사입 매출 기준, 수출 제외</p>
@@ -315,7 +315,7 @@ export default function IncomeStatementPage() {
         </Card>
 
         {/* 수출 지역별 매출 분석 */}
-        <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white">
           <CardHeader className="pb-3 border-b border-slate-100">
             <CardTitle className="text-base font-semibold text-slate-800">수출 지역별 매출 분석</CardTitle>
           </CardHeader>
@@ -360,7 +360,7 @@ export default function IncomeStatementPage() {
       </div>
 
       {/* 브랜드별 매출 분석 */}
-      <Card className="shadow-sm border-0 bg-white">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white">
         <CardHeader className="pb-3 border-b border-slate-100">
           <CardTitle className="text-base font-semibold text-slate-800">브랜드별 매출 분석</CardTitle>
           <p className="text-xs text-slate-500 mt-1">수출 매출 제외, 국내 채널 + 사입 매출 기준</p>
@@ -415,7 +415,7 @@ export default function IncomeStatementPage() {
       </Card>
 
       {/* 브랜드 믹스 변화 (도넛 차트) */}
-      <Card className="shadow-sm border-0 bg-white">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white">
         <CardHeader className="pb-3 border-b border-slate-100">
           <CardTitle className="text-base font-semibold text-amber-600 underline underline-offset-4">
             브랜드 믹스 변화 (국내+사입 매출 기준, 수출 제외)
@@ -496,7 +496,7 @@ export default function IncomeStatementPage() {
 
       {/* 브랜드 인사이트 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="shadow-sm border-0 bg-blue-50/50 overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-blue-50/50 overflow-hidden">
           <div className="h-1 bg-blue-500" />
           <CardHeader className="pb-2 pt-4">
             <CardTitle className="text-base font-semibold text-blue-800">MLB 브랜드</CardTitle>
@@ -507,7 +507,7 @@ export default function IncomeStatementPage() {
             <p>• 수출 매출(중국)에서 고성장</p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-0 bg-orange-50/50 overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-orange-50/50 overflow-hidden">
           <div className="h-1 bg-orange-500" />
           <CardHeader className="pb-2 pt-4">
             <CardTitle className="text-base font-semibold text-orange-800">Discovery 브랜드</CardTitle>

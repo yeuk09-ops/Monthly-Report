@@ -203,12 +203,12 @@ export default function DashboardPage() {
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* KPI Cards - 심플하고 고급스러운 디자인 */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-blue-500" />
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500 font-medium">실판매출(V-) (1~{month}월)</p>
-              <DollarSign className="w-4 h-4 text-slate-400" />
+              <DollarSign className="w-5 h-5 text-slate-400" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{formatNumber(d.revenue.current)}억</p>
             <p className={`text-xs mt-1 font-medium ${m.revenueYoyGrowth >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
@@ -217,11 +217,11 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-0 bg-gradient-to-br from-emerald-500 to-emerald-600 overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-500 to-emerald-600 overflow-hidden">
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-emerald-100 font-medium">영업이익 (1~{month}월)</p>
-              <TrendingUp className="w-4 h-4 text-emerald-200" />
+              <TrendingUp className="w-5 h-5 text-emerald-200" />
             </div>
             <p className="text-2xl font-bold text-white">{formatNumber(d.operatingProfit.current)}억</p>
             <p className="text-xs mt-1 font-medium text-emerald-100">
@@ -230,12 +230,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-slate-400" />
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500 font-medium">총자산 ({month}월)</p>
-              <Building2 className="w-4 h-4 text-slate-400" />
+              <Building2 className="w-5 h-5 text-slate-400" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{formatNumber(d.totalAssets.current)}억</p>
             <p className={`text-xs mt-1 font-medium ${m.assetYoyGrowth && m.assetYoyGrowth >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
@@ -244,12 +244,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-amber-500" />
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500 font-medium">부채 ({month}월)</p>
-              <TrendingDown className="w-4 h-4 text-slate-400" />
+              <TrendingDown className="w-5 h-5 text-slate-400" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{formatNumber(d.totalLiabilities.current)}억</p>
             <p className={`text-xs mt-1 font-medium ${m.liabilityYoyGrowth && m.liabilityYoyGrowth <= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
@@ -258,12 +258,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-violet-500" />
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500 font-medium">자기자본 ({month}월)</p>
-              <PiggyBank className="w-4 h-4 text-slate-400" />
+              <PiggyBank className="w-5 h-5 text-slate-400" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{formatNumber(d.equity.current)}억</p>
             <p className={`text-xs mt-1 font-medium ${m.equityYoyGrowth && m.equityYoyGrowth >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
@@ -275,7 +275,7 @@ export default function DashboardPage() {
 
       {/* Summary Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-blue-500" />
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold text-slate-800">수익성 분석</CardTitle>
@@ -318,7 +318,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-0 bg-white overflow-hidden">
+        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
           <div className="h-1 bg-slate-600" />
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold text-slate-800">재무 현황</CardTitle>
@@ -363,7 +363,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 수익성 지표 */}
-      <Card className="shadow-sm border-0 bg-white overflow-hidden">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
         <div className="h-1 bg-emerald-500" />
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-slate-800">수익성 지표</CardTitle>
@@ -380,7 +380,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* 안정성 지표 */}
-      <Card className="shadow-sm border-0 bg-white overflow-hidden">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
         <div className="h-1 bg-blue-500" />
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-slate-800">안정성 지표</CardTitle>
@@ -400,7 +400,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* 활동성 지표 */}
-      <Card className="shadow-sm border-0 bg-white overflow-hidden">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
         <div className="h-1 bg-amber-500" />
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-slate-800">활동성 지표 (회전율/회전일수)</CardTitle>
@@ -432,7 +432,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 계산식 참고 */}
-      <Card className="shadow-sm border-0 bg-slate-800 text-white">
+      <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-slate-800 text-white">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-semibold text-slate-200">재무비율 계산식</CardTitle>
         </CardHeader>
