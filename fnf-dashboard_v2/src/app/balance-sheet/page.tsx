@@ -302,8 +302,8 @@ export default function BalanceSheetPage() {
                   {brand.items.map((item, subIdx) => (
                     <TableRow key={subIdx} className="hover:bg-gray-50">
                       <TableCell className="pl-12 text-gray-600">{item.label}</TableCell>
-                      <TableCell className="text-right">{item.jan26}</TableCell>
-                      <TableCell className="text-right">{item.jan26}</TableCell>
+                      <TableCell className="text-right">{formatNumber(item.dec25)}</TableCell>
+                      <TableCell className="text-right">{formatNumber(item.jan26)}</TableCell>
                       <TableCell className={`text-right ${getChangeColor(item.change)}`}>{item.change !== undefined && item.change > 0 ? '+' : ''}{item.change}</TableCell>
                       <TableCell className={`text-right ${getChangeColor(item.changePercent)}`}>{item.changePercent !== undefined && item.changePercent > 0 ? '+' : ''}{item.changePercent !== undefined ? item.changePercent.toFixed(1) : '-'}%</TableCell>
                     </TableRow>

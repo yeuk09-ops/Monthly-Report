@@ -61,14 +61,20 @@ export default function DashboardPage() {
     };
 
     // 활동성 지표 - 연환산 기준 (월 데이터를 12배하여 연환산)
-    const avgReceivables = (d.receivables.current + d.receivables.previousMonth) / 2;
-    const avgInventory = (d.inventory.current + d.inventory.previousMonth) / 2;
-    const avgPayables = (d.payables.current + d.payables.previousMonth) / 2;
+    const avgReceivables = d.receivables.previousMonth !== undefined
+      ? (d.receivables.current + d.receivables.previousMonth) / 2
+      : d.receivables.current;
+    const avgInventory = d.inventory.previousMonth !== undefined
+      ? (d.inventory.current + d.inventory.previousMonth) / 2
+      : d.inventory.current;
+    const avgPayables = d.payables.previousMonth !== undefined
+      ? (d.payables.current + d.payables.previousMonth) / 2
+      : d.payables.current;
 
     // 전년 동월 기준 (25.1월 기말 + 24.12월 기말) / 2 - 하지만 24.12 데이터가 없으므로 전년 1월만 사용
-    const avgReceivablesYoY = d.receivables.previousYear;  // 전년 1월 잔액
-    const avgInventoryYoY = d.inventory.previousYear;
-    const avgPayablesYoY = d.payables.previousYear;
+    const avgReceivablesYoY = d.receivables.previousYear || 0;
+    const avgInventoryYoY = d.inventory.previousYear || 0;
+    const avgPayablesYoY = d.payables.previousYear || 0;
 
     // 연환산: 월 매출/원가를 12배하여 연간으로 환산
     const receivablesTurnover = {
