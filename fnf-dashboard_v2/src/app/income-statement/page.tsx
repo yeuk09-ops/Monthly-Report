@@ -238,7 +238,9 @@ export default function IncomeStatementPage() {
             <p className="text-3xl font-bold text-slate-800">{grossMargin.toFixed(1)}%</p>
             <p className="text-sm text-slate-500 mt-1">
               전년 {prevGrossMargin.toFixed(1)}%
-              <span className="text-emerald-500 font-medium ml-1">+{(grossMargin - prevGrossMargin).toFixed(1)}%p</span>
+              <span className={`font-medium ml-1 ${(grossMargin - prevGrossMargin) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                {(grossMargin - prevGrossMargin) >= 0 ? '+' : ''}{(grossMargin - prevGrossMargin).toFixed(1)}%p
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -249,7 +251,9 @@ export default function IncomeStatementPage() {
             <p className="text-3xl font-bold text-slate-800">{opMargin.toFixed(1)}%</p>
             <p className="text-sm text-slate-500 mt-1">
               전년 {prevOpMargin.toFixed(1)}%
-              <span className="text-emerald-500 font-medium ml-1">+{(opMargin - prevOpMargin).toFixed(1)}%p</span>
+              <span className={`font-medium ml-1 ${(opMargin - prevOpMargin) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                {(opMargin - prevOpMargin) >= 0 ? '+' : ''}{(opMargin - prevOpMargin).toFixed(1)}%p
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -260,7 +264,9 @@ export default function IncomeStatementPage() {
             <p className="text-3xl font-bold text-slate-800">{exportRatio.toFixed(1)}%</p>
             <p className="text-sm text-slate-500 mt-1">
               전년 {prevExportRatio.toFixed(1)}%
-              <span className="text-emerald-500 font-medium ml-1">+{(exportRatio - prevExportRatio).toFixed(1)}%p</span>
+              <span className={`font-medium ml-1 ${(exportRatio - prevExportRatio) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                {(exportRatio - prevExportRatio) >= 0 ? '+' : ''}{(exportRatio - prevExportRatio).toFixed(1)}%p
+              </span>
             </p>
           </CardContent>
         </Card>
