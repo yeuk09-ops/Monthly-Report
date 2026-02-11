@@ -1,8 +1,8 @@
 # FNF 재무제표 대시보드 월간 업데이트 가이드
 
 **작성일**: 2026년 2월
-**버전**: 8.0
-**대시보드 URL**: https://fnf-dashboard.vercel.app
+**버전**: 9.0
+**대시보드 URL**: https://fnf-dashboardv2.vercel.app
 
 ---
 
@@ -1945,10 +1945,275 @@ Snowflake DM_F_FI_AR_AGING: 2,139억
 
 ---
 
-## 15. 버전 히스토리
+## 15. Vercel 배포 프로세스
+
+### 15.1 배포 전 체크리스트
+
+**필수 확인 사항**:
+- [ ] 로컬 개발 서버 정상 작동 (`npm run dev`)
+- [ ] 로컬 프로덕션 빌드 성공 (`npm run build`)
+- [ ] TypeScript 오류 없음
+- [ ] 3개 페이지 모두 데이터 정상 표시
+- [ ] Git 커밋 완료 및 푸시
+
+---
+
+### 15.2 배포 방법
+
+#### 방법 1: Vercel CLI 수동 배포 (권장)
+
+**이유**: Monorepo 구조로 인해 GitHub 자동 배포가 실패할 수 있음
+
+```bash
+# 1. 프로젝트 디렉토리로 이동
+cd "C:\Users\AC1144\AI_Fin_Analysis\Claude\Monthly_Report\fnf-dashboard_v2"
+
+# 2. 로컬 빌드 테스트
+npm run build
+
+# 3. 프로덕션 배포
+vercel --prod
+```
+
+**배포 과정**:
+```
+✓ Compiled successfully in 10.2s
+✓ Generating static pages using 1 worker (6/6)
+✓ Build Completed in /vercel/output [20s]
+Aliased: https://fnf-dashboardv2.vercel.app [35s]
+```
+
+**예상 소요 시간**: 약 35~60초
+
+---
+
+#### 방법 2: GitHub 자동 배포 (설정 필요)
+
+**주의**: 현재 Monorepo 구조로 인해 자동 배포 실패 중
+
+**해결 방법**:
+1. Vercel 대시보드 접속
+2. 프로젝트 설정 (fnf-dashboard_v2) → Settings
+3. **Root Directory** 설정:
+   ```
+   AI_Fin_Analysis/Claude/Monthly_Report/fnf-dashboard_v2
+   ```
+4. **Build Command**: `npm run build`
+5. **Output Directory**: `.next`
+6. 설정 저장 후 GitHub push 시 자동 배포
+
+---
+
+### 15.3 배포 확인
+
+#### 배포 성공 확인
+```bash
+# 최근 배포 목록 확인
+vercel ls
+
+# 출력 예시:
+# Age     Deployment                             Status      Environment
+# 1m      https://fnf-dashboardv2-ok8l...        ● Ready     Production
+```
+
+#### 브라우저 테스트
+1. **메인 도메인 접속**: https://fnf-dashboardv2.vercel.app
+2. **3개 페이지 확인**:
+   - ✅ 경영요약 (`/`)
+   - ✅ 손익계산서 (`/income-statement`)
+   - ✅ 재무상태표 (`/balance-sheet`)
+3. **데이터 정합성 검증**:
+   - 매출/영업이익 금액 일치
+   - 전월/전년 대비 증감 정확성
+   - 회전율 지표 (DIO, DSO, DPO) NaN 없음
+
+---
+
+### 15.4 자주 발생하는 배포 오류
+
+#### 오류 1: GitHub 자동 배포 실패 (● Error 상태)
+
+**증상**:
+```bash
+vercel ls
+# Age     Deployment                             Status      Environment
+# 17h     https://fnf-dashboardv2-ams5r...       ● Error     Production
+```
+
+**원인**: Monorepo 구조로 인해 프로젝트 루트를 찾지 못함
+
+**해결**:
+```bash
+# Vercel CLI로 수동 배포
+cd "C:\Users\AC1144\AI_Fin_Analysis\Claude\Monthly_Report\fnf-dashboard_v2"
+vercel --prod
+```
+
+**근본 해결**: Vercel 대시보드에서 Root Directory 명시 (15.2 방법 2 참조)
+
+---
+
+#### 오류 2: 빌드 중 TypeScript 오류
+
+**증상**:
+```
+Error: Type error: Property 'annualized' does not exist on type 'MonthlyReportData'
+```
+
+**해결**:
+1. 로컬 빌드로 오류 확인:
+   ```bash
+   npm run build
+   ```
+2. `src/types/financial.ts`에 누락된 타입 추가
+3. 또는 임시 우회: `tsconfig.json`에서 `strict: false` 설정
+
+---
+
+#### 오류 3: 404 NOT_FOUND 에러
+
+**증상**: 배포는 성공했으나 브라우저에서 404 에러
+
+**원인**:
+- 잘못된 프로젝트 배포 (예: fnf-monthly-report.vercel.app)
+- 정적 페이지 생성 실패
+
+**해결**:
+1. 올바른 도메인 확인: `fnf-dashboardv2.vercel.app`
+2. 오류 프로젝트 삭제:
+   - Vercel 대시보드 → Projects
+   - 오류 프로젝트 (fnf-monthly-report) → Settings → Delete Project
+3. 정상 프로젝트로 재배포
+
+---
+
+#### 오류 4: 환경 변수 누락
+
+**증상**: Snowflake 연결 오류 (해당 시)
+
+**해결**:
+1. Vercel 대시보드 → 프로젝트 → Settings → Environment Variables
+2. `.env.local` 파일의 변수 추가:
+   ```
+   SNOWFLAKE_ACCOUNT=xxx
+   SNOWFLAKE_USERNAME=xxx
+   SNOWFLAKE_PASSWORD=xxx
+   SNOWFLAKE_WAREHOUSE=xxx
+   SNOWFLAKE_DATABASE=xxx
+   ```
+3. 재배포
+
+**참고**: 현재 프로젝트는 정적 JSON 사용으로 환경 변수 불필요
+
+---
+
+### 15.5 배포 URL 관리
+
+**현재 배포 중인 프로젝트**:
+
+| 프로젝트명 | 도메인 | 상태 | 용도 | 비고 |
+|:---|:---|:---:|:---|:---|
+| **fnf-dashboard_v2** | https://fnf-dashboardv2.vercel.app | ✅ Active | 26년 1월 대시보드 | 메인 사용 |
+| fnf-dashboard | https://fnf-dashboard.vercel.app | ⚠️ Old | 25년 12월 대시보드 | 참고용 |
+| ~~fnf-monthly-report~~ | ~~fnf-monthly-report.vercel.app~~ | ❌ Error | 삭제 권장 | 오류 프로젝트 |
+
+**권장 조치**:
+- ✅ **fnf-dashboard_v2**: 계속 사용, 매월 업데이트
+- ⚠️ **fnf-dashboard**: 보존 (이전 버전 참조용)
+- ❌ **fnf-monthly-report**: Vercel 대시보드에서 삭제
+
+---
+
+### 15.6 월간 업데이트 시 배포 워크플로우
+
+```
+Step 1: 로컬 작업
+   ↓
+   - src/data/YYYY-MM.json 업데이트
+   - npm run dev로 확인
+   - npm run build로 빌드 테스트
+
+Step 2: Git 커밋
+   ↓
+   - git add .
+   - git commit -m "Update: YYYY년 MM월 재무 데이터"
+   - git push origin main
+
+Step 3: Vercel 배포
+   ↓
+   - vercel --prod (수동 배포)
+   - 또는 GitHub 자동 배포 (Root Directory 설정 후)
+
+Step 4: 배포 확인
+   ↓
+   - https://fnf-dashboardv2.vercel.app 접속
+   - 3개 페이지 데이터 정합성 확인
+   - 오류 발생 시 15.4 참조
+```
+
+**예상 소요 시간**: 약 5분
+- 로컬 빌드 테스트: 1분
+- Git 커밋/푸시: 30초
+- Vercel 배포: 1분
+- 브라우저 확인: 2분
+
+---
+
+### 15.7 배포 문제 해결 흐름도
+
+```
+배포 실패?
+   │
+   ├─ 로컬 빌드 실패?
+   │  ├─ YES → TypeScript 오류 수정 (15.4 오류 2)
+   │  └─ NO → 다음 단계
+   │
+   ├─ Vercel CLI 배포 실패?
+   │  ├─ YES → 인증 확인 (vercel login)
+   │  └─ NO → 다음 단계
+   │
+   ├─ GitHub 자동 배포 실패?
+   │  ├─ YES → Root Directory 설정 (15.2 방법 2)
+   │  └─ NO → 다음 단계
+   │
+   └─ 배포는 성공했으나 404?
+      └─ 올바른 URL 확인 (15.5)
+```
+
+---
+
+### 15.8 배포 모니터링
+
+#### Vercel CLI 명령어
+
+```bash
+# 배포 목록 확인
+vercel ls
+
+# 특정 배포 로그 확인
+vercel logs [deployment-url]
+
+# 현재 프로덕션 URL 확인
+vercel inspect
+
+# 이전 배포로 롤백
+vercel rollback [deployment-url]
+```
+
+#### 배포 알림 설정 (선택)
+
+1. Vercel 대시보드 → Settings → Notifications
+2. **Deployment Created**: 배포 시작 시 알림
+3. **Deployment Ready**: 배포 성공 시 알림
+4. **Deployment Error**: 배포 실패 시 알림
+
+---
+
+## 16. 버전 히스토리
 
 | 버전 | 날짜 | 주요 변경사항 |
 |:---:|:---|:---|
+| 9.0 | 2026-02-11 | • **Vercel 배포 프로세스 가이드 추가** (15장)<br>• 배포 전 체크리스트 및 워크플로우 정리<br>• Monorepo 구조 배포 문제 해결 방법<br>• GitHub 자동 배포 vs CLI 수동 배포<br>• 4가지 배포 오류 및 해결 방법 문서화<br>• 배포 URL 관리 및 모니터링 가이드 |
 | 8.0 | 2026-02-11 | • **회전율 분석 NaN 오류 해결 가이드 추가** (오류 5)<br>• 단월 vs 연환산 매출 사용 원칙 명확화<br>• 데이터 구조 일관성 체크리스트 추가<br>• 변수 선언 순서 오류 사례 문서화<br>• balance-sheet/page.tsx 전면 수정 가이드<br>• ReferenceError 디버깅 방법 정리 |
 | 7.0 | 2026-02-11 | • 자주 발생하는 오류 및 해결방법 추가 (14장)<br>• 월간 업데이트 정확한 작성 순서 가이드 추가<br>• ROE/ROA 법인세율 적용 계산법 정리<br>• 데이터 정합성 검증 체크리스트 추가<br>• 26.1월 실제 작업 중 발생한 4대 오류 사례 문서화 |
 | 6.0 | 2026-02-10 | • 매출채권 지역별 분류 원칙 (4.6장)<br>• TP채권 처리 방법 추가<br>• 대만 → 홍콩/마카오/대만 그룹 분류 |
@@ -1957,4 +2222,4 @@ Snowflake DM_F_FI_AR_AGING: 2,139억
 
 ---
 
-*Generated by Claude - FNF Dashboard Monthly Update Guide v8.0*
+*Generated by Claude - FNF Dashboard Monthly Update Guide v9.0*
