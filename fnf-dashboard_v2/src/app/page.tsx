@@ -5,12 +5,15 @@ import { useReport } from '@/components/providers/ReportContext';
 import { KPICard, InsightCard, RatioCard } from '@/components/dashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, TrendingUp, TrendingDown, DollarSign, Building2, PiggyBank } from 'lucide-react';
+import prevReportData from '@/data/2025-01.json';
 
 export default function DashboardPage() {
   const { reportData, isLoading } = useReport();
 
   const calculatedMetrics = useMemo(() => {
     if (!reportData) return null;
+
+    const prevReport = prevReportData;
 
     const d = reportData.financialData;
     const incomeStmt = reportData.incomeStatement;
@@ -19,19 +22,16 @@ export default function DashboardPage() {
       prev !== 0 ? ((curr - prev) / prev * 100) : 0;
 
     // 수익성 지표 - 손익계산서의 ratio 값 사용 (incomeStatement.*.ratio)
-    // incomeStatement의 grossProfit과 operatingProfit에 이미 정확한 ratio가 계산되어 있음
+    // 당기: 26년 1월 incomeStatement.ratio
+    // 전년: 25년 1월 incomeStatement.ratio (동기 대비)
     const grossMargin = {
       current: incomeStmt.grossProfit?.ratio || (d.revenue.current - d.cogs.current) / d.revenue.current * 100,
-      previousYear: d.revenue.previousYear && d.cogs.previousYear
-        ? ((d.revenue.previousYear - d.cogs.previousYear) / d.revenue.previousYear * 100)
-        : 0
+      previousYear: prevReport?.incomeStatement?.grossProfit?.ratio || 0
     };
 
     const opMargin = {
       current: incomeStmt.operatingProfit?.ratio || (d.operatingProfit.current / d.revenue.current * 100),
-      previousYear: d.operatingProfit.previousYear && d.revenue.previousYear
-        ? (d.operatingProfit.previousYear / d.revenue.previousYear * 100)
-        : 0
+      previousYear: prevReport?.incomeStatement?.operatingProfit?.ratio || 0
     };
 
     const exportRatio = {
@@ -60,7 +60,17 @@ export default function DashboardPage() {
       previousYear: (d.equity.previousYear / d.totalAssets.previousYear * 100)
     };
 
-    // 활동성 지표 - 연환산 기준 (월 데이터를 12배하여 연환산)
+    // 활동성 지표 - 연환산 기준 사용
+    const annualizedRevenue = reportData.annualized?.revenue || (d.revenue.current * 12);
+    const annualizedCogs = reportData.annualized?.cogs || (d.cogs.current * 12);
+
+    // 전년 연환산 (25년 1~12월 실적)
+    const prevAnnualizedRevenue = prevReport?.annualized?.revenue || 17026;  // 25년 실적
+    const prevAnnualizedCogs = prevReport?.annualized?.cogs || 6158;  // 25년 실적
+
+    // 전년 동기 평균 (25년 1월 데이터 사용) - prevD를 먼저 선언!
+    const prevD = prevReport?.financialData;
+
     const avgReceivables = d.receivables.previousMonth !== undefined
       ? (d.receivables.current + d.receivables.previousMonth) / 2
       : d.receivables.current;
@@ -71,37 +81,39 @@ export default function DashboardPage() {
       ? (d.payables.current + d.payables.previousMonth) / 2
       : d.payables.current;
 
-    // 전년 동월 기준 (25.1월 기말 + 24.12월 기말) / 2 - 하지만 24.12 데이터가 없으므로 전년 1월만 사용
-    const avgReceivablesYoY = d.receivables.previousYear || 0;
-    const avgInventoryYoY = d.inventory.previousYear || 0;
-    const avgPayablesYoY = d.payables.previousYear || 0;
+    const avgReceivablesYoY = prevD?.receivables?.current || d.receivables.previousYear || 0;
+    const avgInventoryYoY = prevD?.inventory?.current || d.inventory.previousYear || 0;
+    const avgPayablesYoY = prevD?.payables?.current || d.payables.previousYear || 0;
 
-    // 연환산: 월 매출/원가를 12배하여 연간으로 환산
+    // 연환산 매출/원가 사용
     const receivablesTurnover = {
-      current: (d.revenue.current * 12) / avgReceivables,
-      previousYear: (d.revenue.previousYear * 12) / avgReceivablesYoY
+      current: avgReceivables > 0 ? annualizedRevenue / avgReceivables : 0,
+      previousYear: avgReceivablesYoY > 0 ? prevAnnualizedRevenue / avgReceivablesYoY : 0
     };
+    console.log('receivablesTurnover:', receivablesTurnover);
+
     const dso = {
-      current: 365 / receivablesTurnover.current,
-      previousYear: 365 / receivablesTurnover.previousYear
+      current: receivablesTurnover.current > 0 ? 365 / receivablesTurnover.current : 0,
+      previousYear: receivablesTurnover.previousYear > 0 ? 365 / receivablesTurnover.previousYear : 0
     };
+    console.log('DSO:', dso);
 
     const inventoryTurnover = {
-      current: (d.cogs.current * 12) / avgInventory,
-      previousYear: (d.cogs.previousYear * 12) / avgInventoryYoY
+      current: avgInventory > 0 ? annualizedCogs / avgInventory : 0,
+      previousYear: avgInventoryYoY > 0 ? prevAnnualizedCogs / avgInventoryYoY : 0
     };
     const dio = {
-      current: 365 / inventoryTurnover.current,
-      previousYear: 365 / inventoryTurnover.previousYear
+      current: inventoryTurnover.current > 0 ? 365 / inventoryTurnover.current : 0,
+      previousYear: inventoryTurnover.previousYear > 0 ? 365 / inventoryTurnover.previousYear : 0
     };
 
     const payablesTurnover = {
-      current: (d.cogs.current * 12) / avgPayables,
-      previousYear: (d.cogs.previousYear * 12) / avgPayablesYoY
+      current: avgPayables > 0 ? annualizedCogs / avgPayables : 0,
+      previousYear: avgPayablesYoY > 0 ? prevAnnualizedCogs / avgPayablesYoY : 0
     };
     const dpo = {
-      current: 365 / payablesTurnover.current,
-      previousYear: 365 / payablesTurnover.previousYear
+      current: payablesTurnover.current > 0 ? 365 / payablesTurnover.current : 0,
+      previousYear: payablesTurnover.previousYear > 0 ? 365 / payablesTurnover.previousYear : 0
     };
 
     const ccc = {
@@ -109,22 +121,16 @@ export default function DashboardPage() {
       previousYear: dso.previousYear + dio.previousYear - dpo.previousYear
     };
 
-    // ROE, ROA - 연환산 기준 (월 영업이익을 12배하여 연간으로 환산)
-    const avgEquity = (d.equity.current + d.equity.previousMonth) / 2;
-    const avgAssets = (d.totalAssets.current + d.totalAssets.previousMonth) / 2;
-    const avgEquityYoY = d.equity.previousYear;  // 전년 1월 자본
-    const avgAssetsYoY = d.totalAssets.previousYear;  // 전년 1월 자산
-
-    const netIncome = d.operatingProfit.current * 0.8 * 12;  // 월 영업이익 → 연환산 당기순이익
-    const prevNetIncome = d.operatingProfit.previousYear * 0.8 * 12;
-
+    // ROE, ROA - JSON ratios에서 직접 가져오기 (연환산 기준)
+    // 26년: 연환산 (26.1월 + 25.2~12월)
+    // 25년: 전년도 실적 (25.1~12월)
     const roe = {
-      current: (netIncome / avgEquity * 100),
-      previousYear: (prevNetIncome / avgEquityYoY * 100)
+      current: reportData.ratios?.profitability?.roe?.annualized || 0,
+      previousYear: prevReport?.ratios?.profitability?.roe?.annualized || 0
     };
     const roa = {
-      current: (netIncome / avgAssets * 100),
-      previousYear: (prevNetIncome / avgAssetsYoY * 100)
+      current: reportData.ratios?.profitability?.roa?.annualized || 0,
+      previousYear: prevReport?.ratios?.profitability?.roa?.annualized || 0
     };
 
     return {
@@ -394,6 +400,9 @@ export default function DashboardPage() {
         <div className="h-1 bg-amber-500" />
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-slate-800">활동성 지표 (회전율/회전일수)</CardTitle>
+          <div className="text-xs text-red-500 mt-2">
+            DEBUG: receivablesTurnover = {JSON.stringify(m.receivablesTurnover)} | dso = {JSON.stringify(m.dso)}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

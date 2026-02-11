@@ -43,18 +43,18 @@ export default function IncomeStatementPage() {
     return change > 0 ? 'text-emerald-500' : 'text-red-500';
   };
 
-  // 수익성 지표 계산 (MoM: 전월 대비)
+  // 수익성 지표 계산 (YoY: 전년 동기 대비)
   const grossMargin = ((financialData.revenue.current - financialData.cogs.current) / financialData.revenue.current * 100);
-  const prevGrossMargin = financialData.revenue.previousMonth && financialData.cogs.previousMonth
-    ? ((financialData.revenue.previousMonth - financialData.cogs.previousMonth) / financialData.revenue.previousMonth * 100)
+  const prevGrossMargin = financialData.revenue.previousYear && financialData.cogs.previousYear
+    ? ((financialData.revenue.previousYear - financialData.cogs.previousYear) / financialData.revenue.previousYear * 100)
     : 0;
   const opMargin = (financialData.operatingProfit.current / financialData.revenue.current * 100);
-  const prevOpMargin = financialData.operatingProfit.previousMonth && financialData.revenue.previousMonth
-    ? (financialData.operatingProfit.previousMonth / financialData.revenue.previousMonth * 100)
+  const prevOpMargin = financialData.operatingProfit.previousYear && financialData.revenue.previousYear
+    ? (financialData.operatingProfit.previousYear / financialData.revenue.previousYear * 100)
     : 0;
   const exportRatio = (financialData.exportRevenue.current / financialData.revenue.current * 100);
-  const prevExportRatio = financialData.exportRevenue.previousMonth && financialData.revenue.previousMonth
-    ? (financialData.exportRevenue.previousMonth / financialData.revenue.previousMonth * 100)
+  const prevExportRatio = financialData.exportRevenue.previousYear && financialData.revenue.previousYear
+    ? (financialData.exportRevenue.previousYear / financialData.revenue.previousYear * 100)
     : 0;
 
   // 채널별 합계
@@ -338,8 +338,13 @@ export default function IncomeStatementPage() {
                   <TableCell className="text-sm text-slate-800">합계</TableCell>
                   <TableCell className="text-right text-sm text-slate-800">{formatNumber(exportTotal.current)}</TableCell>
                   <TableCell className="text-right text-sm text-slate-500">{formatNumber(exportTotal.previous)}</TableCell>
-                  <TableCell className="text-right text-sm text-emerald-500">
-                    +{((exportTotal.current - exportTotal.previous) / exportTotal.previous * 100).toFixed(1)}%
+                  <TableCell className={`text-right text-sm font-semibold ${
+                    ((exportTotal.current - exportTotal.previous) / exportTotal.previous * 100) >= 0
+                      ? 'text-emerald-500'
+                      : 'text-red-500'
+                  }`}>
+                    {((exportTotal.current - exportTotal.previous) / exportTotal.previous * 100) >= 0 ? '+' : ''}
+                    {((exportTotal.current - exportTotal.previous) / exportTotal.previous * 100).toFixed(1)}%
                   </TableCell>
                 </TableRow>
               </TableBody>

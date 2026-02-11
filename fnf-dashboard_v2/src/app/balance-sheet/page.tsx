@@ -31,18 +31,61 @@ export default function BalanceSheetPage() {
     if (!reportData) return null;
     const d = reportData.financialData;
 
-    const avgReceivables = (d.receivables.current + d.receivables.previous) / 2;
-    const avgInventory = (d.inventory.current + d.inventory.previous) / 2;
-    const avgPayables = (d.payables.current + d.payables.previous) / 2;
+    // 연환산 매출/원가 사용 (회전율은 연간 기준으로 계산)
+    const annualizedRevenue = reportData.annualized?.revenue || (d.revenue.current * 12);
+    const annualizedCogs = reportData.annualized?.cogs || (d.cogs.current * 12);
 
-    const receivablesTurnover = { current: d.revenue.current / avgReceivables, previous: d.revenue.previous / ((d.receivables.previous + 1200) / 2) };
-    const inventoryTurnover = { current: d.cogs.current / avgInventory, previous: d.cogs.previous / ((d.inventory.previous + 2100) / 2) };
-    const payablesTurnover = { current: d.cogs.current / avgPayables, previous: d.cogs.previous / ((d.payables.previous + 750) / 2) };
+    // 전년 연환산 (25년 1~12월 실적) - 하드코딩된 값 사용
+    const prevAnnualizedRevenue = 17026;  // 25년 실적
+    const prevAnnualizedCogs = 6158;  // 25년 실적
 
-    const dso = { current: 365 / receivablesTurnover.current, previous: 365 / receivablesTurnover.previous };
-    const dio = { current: 365 / inventoryTurnover.current, previous: 365 / inventoryTurnover.previous };
-    const dpo = { current: 365 / payablesTurnover.current, previous: 365 / payablesTurnover.previous };
-    const ccc = { current: dso.current + dio.current - dpo.current, previous: dso.previous + dio.previous - dpo.previous };
+    // 26년 1월 기준 평균 (current + previousMonth) / 2
+    const avgReceivables = d.receivables.previousMonth !== undefined
+      ? (d.receivables.current + d.receivables.previousMonth) / 2
+      : d.receivables.current;
+    const avgInventory = d.inventory.previousMonth !== undefined
+      ? (d.inventory.current + d.inventory.previousMonth) / 2
+      : d.inventory.current;
+    const avgPayables = d.payables.previousMonth !== undefined
+      ? (d.payables.current + d.payables.previousMonth) / 2
+      : d.payables.current;
+
+    // 25년 1월 기준 평균 (전년 데이터)
+    const avgReceivablesPrev = d.receivables.previousYear || 1970;
+    const avgInventoryPrev = d.inventory.previousYear || 2101;
+    const avgPayablesPrev = d.payables.previousYear || 821;
+
+    // 회전율 계산 (연환산 기준)
+    const receivablesTurnover = {
+      current: avgReceivables > 0 ? annualizedRevenue / avgReceivables : 0,
+      previous: avgReceivablesPrev > 0 ? prevAnnualizedRevenue / avgReceivablesPrev : 0
+    };
+    const inventoryTurnover = {
+      current: avgInventory > 0 ? annualizedCogs / avgInventory : 0,
+      previous: avgInventoryPrev > 0 ? prevAnnualizedCogs / avgInventoryPrev : 0
+    };
+    const payablesTurnover = {
+      current: avgPayables > 0 ? annualizedCogs / avgPayables : 0,
+      previous: avgPayablesPrev > 0 ? prevAnnualizedCogs / avgPayablesPrev : 0
+    };
+
+    // 회전일수 계산
+    const dso = {
+      current: receivablesTurnover.current > 0 ? 365 / receivablesTurnover.current : 0,
+      previous: receivablesTurnover.previous > 0 ? 365 / receivablesTurnover.previous : 0
+    };
+    const dio = {
+      current: inventoryTurnover.current > 0 ? 365 / inventoryTurnover.current : 0,
+      previous: inventoryTurnover.previous > 0 ? 365 / inventoryTurnover.previous : 0
+    };
+    const dpo = {
+      current: payablesTurnover.current > 0 ? 365 / payablesTurnover.current : 0,
+      previous: payablesTurnover.previous > 0 ? 365 / payablesTurnover.previous : 0
+    };
+    const ccc = {
+      current: dso.current + dio.current - dpo.current,
+      previous: dso.previous + dio.previous - dpo.previous
+    };
 
     return { dso, dio, dpo, ccc };
   }, [reportData]);

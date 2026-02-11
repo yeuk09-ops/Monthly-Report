@@ -1,7 +1,7 @@
 # FNF 재무제표 대시보드 월간 업데이트 가이드
 
 **작성일**: 2026년 2월
-**버전**: 6.0
+**버전**: 8.0
 **대시보드 URL**: https://fnf-dashboard.vercel.app
 
 ---
@@ -494,6 +494,172 @@ WHERE i.CORP_CD = '1000'
       IN ('MT','JK','JP','VT','CT','PT','OP','TS','SW','HD','BL','TR')
 GROUP BY i.BRD_CD, CATEGORY, i.YYYYMM
 ORDER BY i.BRD_CD, CATEGORY, i.YYYYMM;
+```
+
+### 4.6 매출채권 지역별 분류 원칙 ⭐ **중요**
+
+**핵심 원칙**: 26년 1월부터 매출채권 지역별 분류 체계가 변경되었습니다.
+
+#### 4.6.1 데이터 소스 구분
+
+| 구분 | 데이터 소스 | 업데이트 시점 | 비고 |
+|:---|:---|:---|:---|
+| **매출채권 총액** | CSV `F&F 월별재무제표` | 월말 마감 | 2,350억 (26.1월 기준) |
+| **지역별 AR 상세** | 재무팀 제공 또는 SAP ZFIR0580 | 월말 마감 | Snowflake 미반영 |
+| **Snowflake AR** | `DM_F_FI_AR_AGING` | 약 1주일 지연 | 참고용, TP채권 미포함 |
+
+**⚠️ 주의**: Snowflake DM_F_FI_AR_AGING는 **TP채권(FI전표) 211억이 누락**되어 있습니다.
+
+#### 4.6.2 지역별 분류 체계
+
+**26년 1월 기준 정확한 분류**:
+
+```
+전체 매출채권: 2,350억 (CSV 기준)
+├─ 국내: 629억
+├─ 수출-중국: 1,229억
+├─ 수출-홍콩/마카오/대만: 440억 ⭐ TP채권 211억 포함
+└─ 수출-기타: 52억 (동남아/유럽/미국)
+```
+
+**홍콩/마카오/대만 상세**:
+- 실제 매출채권: 229억 (Snowflake 조회 가능)
+- TP별도채권(FI전표): 211억 (Snowflake 미반영)
+- **합계: 440억** (재무제표 반영 금액)
+
+#### 4.6.3 대만 채권 분류 규칙
+
+**대만은 홍콩에 포함됩니다**:
+- DW_DELV 매출: `SHOP_ID LIKE 'TW%' OR SHOP_ID LIKE 'TX%'` → **홍콩/마카오/대만** 그룹
+- DM_F_FI_AR_AGING 채권: `NAME1 LIKE '%TAIWAN BRANCH%'` → **홍콩/마카오/대만** 그룹
+
+**쿼리 예시** (25년 12월):
+```sql
+-- 수출 지역별 매출 (대만 포함)
+SELECT
+    CASE
+        WHEN SHOP_ID LIKE 'CN%' THEN '중국'
+        WHEN SHOP_ID LIKE 'HK%' OR SHOP_ID LIKE 'MC%'
+             OR SHOP_ID LIKE 'TW%' OR SHOP_ID LIKE 'TX%' THEN '홍콩/마카오/대만'
+        ELSE '기타'
+    END AS REGION,
+    ROUND(SUM(SUPP_AMT) / 100000000, 1) AS SALE_100M_KRW
+FROM FNF.PRCS.DW_DELV
+WHERE DELV_DT >= '2025-11-01' AND DELV_DT < '2026-02-01'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+GROUP BY REGION;
+
+-- 결과 (25년 11~26년 1월):
+-- 중국: 11월 443억, 12월 1,093억, 1월 810억
+-- 홍콩/마카오/대만: 11월 15억, 12월 29억, 1월 42억
+-- 기타: 11월 16억, 12월 19억, 1월 38억
+```
+
+**매출채권 지역별** (NAME1 기준):
+```sql
+-- 25년 12월 AR 지역별 (대만 분리 확인)
+SELECT
+    NAME1,
+    ROUND(SUM(TRY_TO_NUMBER(COL_2_TOTAL)) / 100000000, 1) AS AR_100M_KRW
+FROM FNF.SAP_FNF.DM_F_FI_AR_AGING
+WHERE CALMONTH = '2025-12'
+  AND ZARTYP = 'R1'
+  AND WWBND IN ('M', 'I', 'X', 'V', 'ST', 'W')
+  AND WWDCH = '09'  -- 수출
+  AND NAME1 LIKE '%TAIWAN%'
+GROUP BY NAME1;
+
+-- 결과:
+-- F&F HONG KONG LIMITED, TAIWAN BRANCH (105792): 58.1억
+-- F&F HONG KONG LIMITED, TAIWAN BRANCH (105909): 11.7억
+-- F&F HONG KONG LIMITED, TAIWAN BRANCH (105803): 1.3억
+-- 대만 AR 합계: 71.1억
+```
+
+#### 4.6.4 매출채권 차이 조정 원칙
+
+**Snowflake vs CSV 차이 조정**:
+
+| 항목 | Snowflake | 조정 | 최종(CSV) |
+|:---|---:|---:|---:|
+| 국내 | 737억 | +9억 | 746억 |
+| 중국 | 736억 | 0억 | 736억 |
+| 홍콩/마카오/대만 | 234억 | **+211억** | 445억 |
+| 기타 | 38억 | 0억 | 38억 |
+| **합계** | 1,745억 | **+220억** | **1,965억** |
+
+**조정 내역**:
+1. **TP채권 211억**: 홍콩/마카오/대만에 추가 (FI전표, Snowflake 미반영)
+2. **국내 9억**: 소액 차이를 국내로 반영
+
+#### 4.6.5 여신검증 계산 공식
+
+**채널별 기준**:
+
+| 채널 | 계산 공식 | 정상 기준 | 비고 |
+|:---|:---|:---|:---|
+| 국내 | AR ÷ 1월 매출 | 1.5개월 | 최근 2개월 평균 가능 |
+| 중국 | AR ÷ 1월 매출 | 1.0개월 | 수출 후 익월 송금 |
+| 홍콩/대만 | AR ÷ [(11+12+1월)÷3] | 3.0개월 | 최근 3개월 평균 필수 |
+| 기타 | AR ÷ [(12+1월)÷2] | 2.0개월 | 최근 2개월 평균 필수 |
+
+**26년 1월 실제 계산**:
+```json
+{
+  "channel": "국내",
+  "jan": 748,
+  "arBalance": 629,
+  "months": 0.8,  // 629 ÷ 748 = 0.8개월
+  "status": "excellent"
+},
+{
+  "channel": "수출-중국",
+  "jan": 810,
+  "arBalance": 1229,
+  "months": 1.5,  // 1,229 ÷ 810 = 1.5개월
+  "status": "normal"
+},
+{
+  "channel": "수출-홍콩/마카오/대만",
+  "nov": 15, "dec": 29, "jan": 42,
+  "arBalance": 440,
+  "months": 10.5,  // 440 ÷ [(15+29+42)÷3] = 10.5개월
+  "status": "danger",
+  "notes": ["TP채권 211억 포함"]
+},
+{
+  "channel": "수출-기타",
+  "dec": 19, "jan": 38,
+  "arBalance": 52,
+  "months": 1.4,  // 52 ÷ 38 = 1.4개월
+  "status": "normal"
+}
+```
+
+#### 4.6.6 SAP ZFIR0580 조회 방법
+
+**SAP 트랜잭션**: ZFIR0580 (거래처별 잔액 조회)
+
+**출력 필드**:
+- 사업영역, 브랜드, 유통구분, 고객코드, 고객코드명
+- 계정코드 (예: 11070113 = 외상매출금_수출)
+- 금액(KRW), 외화금액, 통화
+
+**⚠️ Snowflake 미반영**:
+- SAP ZFIR0580 데이터는 Snowflake에 테이블로 존재하지 않음
+- 월말 재무팀에서 Excel 파일로 제공받거나 직접 조회 필요
+- `EXPORT.XLSX` 형태로 받은 경우 Python pandas로 집계
+
+**Python 집계 예시**:
+```python
+import pandas as pd
+
+df = pd.read_excel('EXPORT.XLSX')
+df_ar = df[df['계정코드'].str.contains('1107', na=False)]  # 외상매출금
+
+# 지역별 집계
+result = df_ar.groupby('고객코드명')['금액'].sum() / 100000000  # 억원 단위
+print(result)
 ```
 
 ---
@@ -1194,7 +1360,601 @@ CCC = DSO + DIO - DPO
 | | | - previousMonth vs previousYear 구분 명확화 |
 | | | - 데이터 일관성 체크리스트 추가 |
 | | | - TypeScript optional 필드 처리 가이드 |
+| 2026-02-11 | 7.0 | **매출채권 지역별 분류 체계 확립 (26.1월 업데이트)** ⭐ |
+| | | - **섹션 4.6**: 매출채권 지역별 분류 원칙 추가 (데이터 소스 구분 명확화) |
+| | | - **대만 분류 규칙**: 대만은 "홍콩/마카오/대만" 그룹에 포함 |
+| | | - **TP채권 처리**: 홍콩/대만 AR에 FI전표 211억 별도 반영 (Snowflake 미반영) |
+| | | - **Snowflake vs CSV 차이 조정**: 국내 +9억, 홍콩/대만 +211억 = 총 220억 조정 |
+| | | - **여신검증 계산 공식**: 채널별 기준 (국내 1.5개월, 중국 1.0개월, 홍콩/대만 3개월, 기타 2개월) |
+| | | - **SAP ZFIR0580**: 거래처별 잔액 조회 방법 및 Python 집계 스크립트 |
+| | | - **데이터 신뢰도 우선순위**: CSV 총액 > 재무팀 제공 내역 > Snowflake 참고 |
+| | | - 26년 1월 실제 적용 사례 및 계산 검증 결과 포함 |
+| | | - 26.2월부터 즉시 적용 가능하도록 상세 가이드 작성 |
 
 ---
 
-*Generated by Claude - FNF Dashboard Monthly Update Guide v6.0*
+## 14. 자주 발생하는 오류 및 해결방법 (Troubleshooting Guide)
+
+### 14.1 데이터 정합성 오류
+
+#### 오류 1: 손익계산서 매출 ≠ 채널별 매출 합계
+
+**증상**:
+```
+손익계산서 실판매출(V-): 1,638억
+채널별 매출 합계: 736억 (국내만)
+수출 매출 합계: 750억
+총 합계: 1,486억 ← 152억 차이 발생
+```
+
+**원인**:
+- 채널별/수출 매출 데이터를 이전 월 또는 잘못된 기간으로 조회
+- 전년 데이터(25.1월)와 당기 데이터(26.1월) 혼용
+
+**해결방법**:
+```sql
+-- 1단계: 당기 채널별 매출 (국내+사입) 정확히 조회
+SELECT
+    CASE
+        WHEN CHNL_CD = '1' THEN '백화점'
+        WHEN CHNL_CD = '3' THEN '대리점'
+        WHEN CHNL_CD = '2' THEN '면세점'
+        WHEN CHNL_CD = '5' THEN '직영점'
+        WHEN CHNL_CD = '4' THEN '할인점'
+        WHEN CHNL_CD = '6' THEN '아울렛'
+        WHEN CHNL_CD = '7' THEN '온라인(자사몰)'
+        WHEN CHNL_CD = '11' THEN '온라인(입점몰)'
+        WHEN CHNL_CD = '8' THEN '사입'
+        ELSE '기타'
+    END AS CHANNEL,
+    ROUND(SUM(VAT_EXC_ACT_SALE_AMT) / 100000000, 0) AS SALE
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT >= '2026-01-01' AND PST_DT < '2026-02-01'  -- ★ 기간 정확히!
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+  AND CHNL_CD NOT IN ('99', '0', '9')  -- 수출 제외
+GROUP BY CHANNEL;
+
+-- 2단계: 수출 매출 DW_DELV에서 조회
+SELECT
+    CASE
+        WHEN SHOP_ID LIKE 'CN%' THEN '중국'
+        WHEN SHOP_ID LIKE 'HK%' OR SHOP_ID LIKE 'MC%'
+             OR SHOP_ID LIKE 'TW%' OR SHOP_ID LIKE 'TX%' THEN '홍콩/마카오/대만'
+        ELSE '기타'
+    END AS REGION,
+    ROUND(SUM(SUPP_AMT) / 100000000, 0) AS SALE
+FROM FNF.PRCS.DW_DELV
+WHERE DELV_DT >= '2026-01-01' AND DELV_DT < '2026-02-01'  -- ★ 기간 정확히!
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+  AND (SHOP_ID LIKE 'CN%' OR SHOP_ID LIKE 'HK%'
+       OR SHOP_ID LIKE 'MC%' OR SHOP_ID LIKE 'TW%'
+       OR SHOP_ID LIKE 'TH%' OR SHOP_ID LIKE 'MY%'
+       OR SHOP_ID LIKE 'ID%' OR SHOP_ID LIKE 'VN%'
+       OR SHOP_ID LIKE 'SG%' OR SHOP_ID LIKE 'AE%'
+       OR SHOP_ID LIKE 'KH%' OR SHOP_ID LIKE 'TX%'
+       OR SHOP_ID LIKE 'HX%')
+GROUP BY REGION;
+
+-- 3단계: 검증
+-- 국내 합계 + 수출 합계 ≈ 손익계산서 실판매출(V-) (±1~2억 허용, 반올림 차이)
+```
+
+**예방책**:
+- 손익 데이터 조회 후 즉시 채널별/수출 매출 조회하여 합계 일치 확인
+- JSON 작성 전 엑셀에서 합계 검산
+
+---
+
+#### 오류 2: 영업이익 계산 누락 (0억 표시)
+
+**증상**:
+```json
+"operatingProfit": {
+  "current": 0,
+  "previous": 0,
+  "ratio": 0
+}
+```
+
+손익계산서 탭에서 영업이익 0억, 영업이익률 0.0% 표시
+
+**원인**:
+- `financialData.operatingProfit` 업데이트 누락
+- `incomeStatement.operatingProfit` 계산 누락
+
+**해결방법**:
+```javascript
+// 2026-01.json 수정
+{
+  "financialData": {
+    "operatingProfit": {
+      "current": 642,        // ★ 계산: 1064(매출총이익) - 172(점수수료) - 250(직접비)
+      "previousMonth": 679,  // 전월 값
+      "previousYear": 656    // 전년 동월 값
+    }
+  },
+  "incomeStatement": {
+    "operatingProfit": {
+      "current": 642,
+      "previous": 656,       // 전년 동월
+      "change": -14,
+      "changePercent": -2.1,
+      "ratio": 39.2,         // 642 ÷ 1638 × 100
+      "note": "= 매출총이익 - 점수수료 - 직접비"
+    }
+  }
+}
+```
+
+**계산 공식**:
+```
+영업이익 = 매출총이익 - 점수수료 - 직접비 - 간접비
+        = 1,064 - 172 - 250 - 0
+        = 642억
+
+영업이익률 = 영업이익 ÷ 실판매출(V-) × 100
+          = 642 ÷ 1,638 × 100
+          = 39.2%
+```
+
+---
+
+#### 오류 3: 수익성 지표 전년 값 오류 (previousMonth vs previousYear 혼동)
+
+**증상**:
+```
+매출총이익률: 64.9% (전년 66.2% 표시) ← 실제 64.8%여야 함
+영업이익률: 39.2% (전년 41.3% 표시) ← 실제 39.9%여야 함
+```
+
+**원인**:
+- `income-statement/page.tsx`에서 `financialData.previousMonth` 사용
+- 실제로는 `previousYear` (전년 동기) 사용해야 함
+
+**해결방법**:
+```typescript
+// income-statement/page.tsx 수정
+// ❌ 잘못된 코드
+const prevGrossMargin = financialData.revenue.previousMonth && financialData.cogs.previousMonth
+  ? ((financialData.revenue.previousMonth - financialData.cogs.previousMonth) / financialData.revenue.previousMonth * 100)
+  : 0;
+
+// ✅ 올바른 코드
+const prevGrossMargin = financialData.revenue.previousYear && financialData.cogs.previousYear
+  ? ((financialData.revenue.previousYear - financialData.cogs.previousYear) / financialData.revenue.previousYear * 100)
+  : 0;
+```
+
+**체크리스트**:
+- [ ] 손익계산서 페이지: YoY 비교 (previousYear)
+- [ ] 경영요약 페이지: YoY 비교 (previousYear)
+- [ ] 재무상태표 페이지: MoM/YoY 둘 다 표시
+
+---
+
+#### 오류 4: ROE/ROA 계산 오류 (× 0.8 임의 추정)
+
+**증상**:
+```
+ROE: 26.9% (전년 0.0%)
+ROA: 21.8% (전년 0.0%)
+```
+
+당기순이익 추정에 임의의 × 0.8 사용
+
+**원인**:
+- 법인세율을 고려하지 않은 임의 추정치 사용
+- 전년 ROE/ROA 계산 누락
+
+**정확한 계산방법**:
+```
+# 1단계: 25년 연환산 실적 확인
+25년 매출(V-): 17,026억 (Snowflake 조회)
+25년 영업이익: 5,013억 (가이드 참조)
+
+# 2단계: 법인세율 적용 당기순이익 계산
+25년 법인세율: 25.5%
+25년 당기순이익 = 5,013 × (1 - 0.255) = 3,735억
+
+26년 법인세율: 26.5%
+26년 영업이익 연환산 = 642 (26.1월) + 4,357 (25.2~12월) = 4,999억
+26년 당기순이익 = 4,999 × (1 - 0.265) = 3,674억
+
+# 3단계: ROE/ROA 계산
+25년 ROE = 3,735 ÷ 15,357 × 100 = 24.3%
+25년 ROA = 3,735 ÷ 20,267 × 100 = 18.4%
+
+26년 ROE = 3,674 ÷ 18,646 × 100 = 19.7%
+26년 ROA = 3,674 ÷ 22,938 × 100 = 16.0%
+```
+
+**2025-01.json / 2026-01.json 업데이트**:
+```json
+{
+  "ratios": {
+    "profitability": {
+      "roe": { "current": 0, "previous": 0, "annualized": 24.3 },
+      "roa": { "current": 0, "previous": 0, "annualized": 18.4 }
+    }
+  }
+}
+```
+
+---
+
+#### 오류 5: 회전율 분석 전체 NaN 표시 (Activity Ratios)
+
+**증상**:
+```
+재고회전일수 (DIO): NaN일
+매출채권회전일수 (DSO): NaN일
+매입채무회전일수 (DPO): NaN일
+현금전환주기 (CCC): NaN일
+```
+
+모든 회전율 지표가 NaN으로 표시되어 분석 불가
+
+**발생 원인 (3단계)**:
+
+**1단계: 데이터 구조 불일치**
+```typescript
+// 문제: 2025-01.json이 구조가 다름
+// 2026-01.json
+"receivables": { "current": 2350, "previousMonth": 1966, "previousYear": 1970 }
+
+// 2025-01.json (잘못됨)
+"receivables": { "current": 1970, "previous": 0 }  // ❌ previousYear 필드 없음!
+```
+
+**해결**: 2025-01.json을 2026-01.json과 동일한 구조로 변경
+```json
+{
+  "financialData": {
+    "receivables": { "current": 1970, "previousMonth": 1970, "previousYear": 1970 },
+    "inventory": { "current": 2101, "previousMonth": 2101, "previousYear": 2101 },
+    "payables": { "current": 821, "previousMonth": 821, "previousYear": 821 }
+  }
+}
+```
+
+**2단계: 변수 선언 순서 오류 (ReferenceError)**
+```typescript
+// ❌ 잘못된 코드 (page.tsx)
+console.log('prevD:', prevD);  // Line 82
+...
+const prevD = prevReport?.financialData;  // Line 98 - 나중에 선언!
+
+// ✅ 올바른 코드
+const prevD = prevReport?.financialData;  // 먼저 선언
+...
+console.log('prevD:', prevD);  // 이후 사용
+```
+
+**3단계: 단월 매출 사용 오류 (연환산 미적용)**
+```typescript
+// ❌ 잘못된 코드 (balance-sheet/page.tsx)
+const receivablesTurnover = {
+  current: d.revenue.current / avgReceivables,  // 1,638억 (단월) ÷ 2,158 = 잘못됨!
+  previous: d.revenue.previous / avgReceivablesPrev
+};
+
+// ✅ 올바른 코드
+const annualizedRevenue = reportData.annualized?.revenue || (d.revenue.current * 12);  // 17,006억
+const receivablesTurnover = {
+  current: avgReceivables > 0 ? annualizedRevenue / avgReceivables : 0,  // 17,006 ÷ 2,158 = 7.9회
+  previous: avgReceivablesPrev > 0 ? prevAnnualizedRevenue / avgReceivablesPrev : 0
+};
+```
+
+**완전한 해결 코드 (balance-sheet/page.tsx)**:
+```typescript
+const turnoverMetrics = useMemo(() => {
+  if (!reportData) return null;
+  const d = reportData.financialData;
+
+  // 연환산 매출/원가 사용 (회전율은 연간 기준으로 계산)
+  const annualizedRevenue = reportData.annualized?.revenue || (d.revenue.current * 12);
+  const annualizedCogs = reportData.annualized?.cogs || (d.cogs.current * 12);
+
+  // 전년 연환산 (25년 1~12월 실적)
+  const prevAnnualizedRevenue = 17026;  // 25년 실적
+  const prevAnnualizedCogs = 6158;      // 25년 실적
+
+  // 26년 1월 기준 평균 (current + previousMonth) / 2
+  const avgReceivables = d.receivables.previousMonth !== undefined
+    ? (d.receivables.current + d.receivables.previousMonth) / 2
+    : d.receivables.current;
+  const avgInventory = d.inventory.previousMonth !== undefined
+    ? (d.inventory.current + d.inventory.previousMonth) / 2
+    : d.inventory.current;
+  const avgPayables = d.payables.previousMonth !== undefined
+    ? (d.payables.current + d.payables.previousMonth) / 2
+    : d.payables.current;
+
+  // 25년 1월 기준 평균 (전년 데이터)
+  const avgReceivablesPrev = d.receivables.previousYear || 1970;
+  const avgInventoryPrev = d.inventory.previousYear || 2101;
+  const avgPayablesPrev = d.payables.previousYear || 821;
+
+  // 회전율 계산 (연환산 기준)
+  const receivablesTurnover = {
+    current: avgReceivables > 0 ? annualizedRevenue / avgReceivables : 0,
+    previous: avgReceivablesPrev > 0 ? prevAnnualizedRevenue / avgReceivablesPrev : 0
+  };
+  const inventoryTurnover = {
+    current: avgInventory > 0 ? annualizedCogs / avgInventory : 0,
+    previous: avgInventoryPrev > 0 ? prevAnnualizedCogs / avgInventoryPrev : 0
+  };
+  const payablesTurnover = {
+    current: avgPayables > 0 ? annualizedCogs / avgPayables : 0,
+    previous: avgPayablesPrev > 0 ? prevAnnualizedCogs / avgPayablesPrev : 0
+  };
+
+  // 회전일수 계산
+  const dso = {
+    current: receivablesTurnover.current > 0 ? 365 / receivablesTurnover.current : 0,
+    previous: receivablesTurnover.previous > 0 ? 365 / receivablesTurnover.previous : 0
+  };
+  const dio = {
+    current: inventoryTurnover.current > 0 ? 365 / inventoryTurnover.current : 0,
+    previous: inventoryTurnover.previous > 0 ? 365 / inventoryTurnover.previous : 0
+  };
+  const dpo = {
+    current: payablesTurnover.current > 0 ? 365 / payablesTurnover.current : 0,
+    previous: payablesTurnover.previous > 0 ? 365 / payablesTurnover.previous : 0
+  };
+  const ccc = {
+    current: dso.current + dio.current - dpo.current,
+    previous: dso.previous + dio.previous - dpo.previous
+  };
+
+  return { dso, dio, dpo, ccc };
+}, [reportData]);
+```
+
+**계산 예시 (26년 1월)**:
+```
+연환산 매출: 17,006억 (26.1월 + 25.2~12월)
+연환산 원가: 6,129억
+평균 매출채권: (2,350 + 1,966) / 2 = 2,158억
+평균 재고자산: (2,198 + 2,300) / 2 = 2,249억
+평균 매입채무: (957 + 905) / 2 = 931억
+
+매출채권회전율 = 17,006 ÷ 2,158 = 7.9회
+DSO = 365 ÷ 7.9 = 46일
+
+재고자산회전율 = 6,129 ÷ 2,249 = 2.7회
+DIO = 365 ÷ 2.7 = 134일
+
+매입채무회전율 = 6,129 ÷ 931 = 6.6회
+DPO = 365 ÷ 6.6 = 55일
+
+CCC = 46 + 134 - 55 = 125일
+```
+
+**주요 체크포인트**:
+- [ ] 2025-01.json에 receivables/inventory/payables의 previousMonth, previousYear 필드 존재
+- [ ] page.tsx에서 prevD 선언이 사용보다 먼저
+- [ ] balance-sheet/page.tsx에서 annualizedRevenue/Cogs 사용 (단월 아님!)
+- [ ] 회전율 계산 시 0으로 나누기 방지 (조건문 사용)
+
+**디버깅 방법**:
+1. 브라우저 콘솔에서 에러 확인 (ReferenceError, NaN)
+2. console.log로 중간 계산값 출력
+3. 개발서버 재시작 (캐시 클리어: `rm -rf .next && npm run dev`)
+
+---
+
+### 14.2 월간 업데이트 정확한 작성 순서 (Critical Path)
+
+#### Phase 1: 데이터 수집 (Snowflake + CSV)
+
+```
+1️⃣ 당기(26.1월) 손익 데이터 조회
+   ├─ 실판매출(V+, V-)
+   ├─ 매출원가
+   ├─ 매출총이익 및 비율
+   └─ 국내/수출 매출 구분
+
+2️⃣ 전년(25.1월) 손익 데이터 조회
+   ├─ 동일 쿼리, PST_DT만 변경
+   └─ 비교 기준 확보
+
+3️⃣ 채널별/수출 매출 조회 (당기 + 전년)
+   ├─ 국내 채널별 (백화점, 대리점, 면세점 등)
+   ├─ 수출 지역별 (중국, 홍콩/대만, 기타)
+   └─ ★ 합계 검증: 국내+수출 = 손익 매출
+
+4️⃣ 재무상태표 CSV 읽기
+   ├─ 25년 1월 / 25년 12월 / 26년 1월 (3개월)
+   ├─ 자산/부채/자본 항목별 추출
+   └─ MoM/YoY 증감 계산
+
+5️⃣ 매출채권 상세 조회 (Snowflake DM_F_FI_AR_AGING)
+   ├─ 국내/수출 지역별 분류
+   ├─ TP채권 별도 확인
+   └─ CSV 총액과 일치 검증
+```
+
+#### Phase 2: JSON 파일 작성 (순서 중요!)
+
+```
+1️⃣ 2026-01.json 작성 시작
+
+   Step 1: meta 섹션
+   ├─ year: 2026, month: 1
+   └─ updatedAt: 작성일자
+
+   Step 2: financialData 섹션 (★ 가장 먼저!)
+   ├─ revenue: { current, previousMonth, previousYear }
+   ├─ cogs: { current, previousMonth, previousYear }
+   ├─ operatingProfit: { current, previousMonth, previousYear } ← ★ 필수!
+   ├─ totalAssets, cash, receivables, inventory, ...
+   ├─ totalLiabilities, borrowings, ...
+   └─ equity, retainedEarnings
+
+   Step 3: incomeStatement 섹션
+   ├─ revenue 배열 (택가, V+, V-, 국내, 수출, 할인율)
+   ├─ costs 배열 (매출원가, 점수수료, 직접비, 간접비)
+   ├─ grossProfit { current, previous, ratio } ← ratio 필수!
+   └─ operatingProfit { current, previous, ratio } ← ratio 필수!
+
+   Step 4: channelSales + exportSales 배열
+   ├─ ★ 합계 검증: Σ channelSales + Σ exportSales ≈ revenue
+   └─ YoY 증감율 계산
+
+   Step 5: brandSales 배열
+   └─ domestic/export 구분 포함
+
+   Step 6: balanceSheet 섹션
+   ├─ assets, liabilities, equity 배열
+   ├─ 3개월 비교: jan25, dec25, jan26
+   ├─ momChange, yoyChange 계산
+   └─ totals 합계 검증
+
+   Step 7: workingCapital 섹션
+   ├─ creditVerification (여신검증)
+   └─ ar (매출채권 지역별)
+
+   Step 8: ratios 섹션
+   ├─ profitability (법인세율 적용!)
+   ├─ stability
+   └─ activity
+
+   Step 9: aiInsights 섹션
+   └─ 재무분석가 관점 작성
+
+2️⃣ 2025-01.json 작성 (전년 비교 기준)
+
+   ├─ 25.1월 단월 실적 (누계 아님!)
+   ├─ incomeStatement.grossProfit.ratio: 64.8%
+   ├─ incomeStatement.operatingProfit.ratio: 39.9%
+   ├─ ratios.profitability (25년 연환산)
+   │   ├─ grossMargin: 63.8%
+   │   ├─ operatingMargin: 29.4%
+   │   ├─ roe: 24.3% (법인세율 25.5% 적용)
+   │   └─ roa: 18.4%
+   └─ meta.note: "25년 1월 단월 실적 (누계 아님)"
+```
+
+#### Phase 3: 검증 체크리스트 (Quality Assurance)
+
+```
+✅ 데이터 정합성
+   □ 손익 매출 = 채널별 합계 + 수출 합계 (±1~2억 허용)
+   □ 총자산 = 총부채 + 총자본 (완전 일치)
+   □ 매출총이익 = 매출 - 매출원가
+   □ 영업이익 = 매출총이익 - 점수수료 - 직접비 - 간접비
+
+✅ 비율 계산
+   □ 매출총이익률 = 매출총이익 ÷ 매출 × 100
+   □ 영업이익률 = 영업이익 ÷ 매출 × 100
+   □ ROE = 당기순이익 ÷ 자기자본 × 100 (법인세율 적용!)
+   □ ROA = 당기순이익 ÷ 총자산 × 100 (법인세율 적용!)
+
+✅ 전년 비교
+   □ incomeStatement.previous = 25.1월 값
+   □ financialData.previousYear = 25.1월 값
+   □ income-statement/page.tsx: previousYear 사용 확인
+   □ page.tsx: prevReport 정확히 import
+
+✅ 영업이익 확인
+   □ financialData.operatingProfit.current > 0
+   □ incomeStatement.operatingProfit.current > 0
+   □ incomeStatement.operatingProfit.ratio > 0
+   □ KPI 카드 영업이익 표시 확인
+
+✅ 브라우저 테스트
+   □ http://localhost:3005 접속
+   □ 경영요약: KPI 5개, 수익성 지표 5개 정상 표시
+   □ 손익계산서: 매출/비용/영업이익 정상, 전년 비교 정확
+   □ 재무상태표: 3개월 비교, MoM/YoY 증감 정확
+   □ F12 개발자도구 Console 에러 없음
+```
+
+#### Phase 4: 캐시 이슈 대응
+
+```
+1️⃣ 개발 서버 재시작
+   cd "C:\Users\AC1144\...\fnf-dashboard_v2"
+   rm -rf .next
+   npm run dev -- --port 3005
+
+2️⃣ 브라우저 강력 새로고침
+   - Windows: Ctrl + Shift + R 또는 Ctrl + F5
+   - Mac: Cmd + Shift + R
+
+3️⃣ 여전히 안 되면
+   - 브라우저 개발자도구 (F12)
+   - Application → Clear storage → Clear site data
+   - 서버 재시작 + 브라우저 재시작
+```
+
+---
+
+### 14.3 데이터 소스별 신뢰도 및 우선순위
+
+| 순위 | 데이터 소스 | 신뢰도 | 용도 | 비고 |
+|:---:|:---|:---:|:---|:---|
+| 1 | **CSV 재무제표** | ⭐⭐⭐⭐⭐ | 재무상태표 총액 | 공식 재무팀 제공, 최종 확정 |
+| 2 | **Snowflake DW_COPA_D** | ⭐⭐⭐⭐ | 손익계산서, 채널별 매출 | 실시간 업데이트, 상세 분석 |
+| 3 | **Snowflake DW_DELV** | ⭐⭐⭐⭐ | 수출 지역별 매출 | 출고 기준, 정확도 높음 |
+| 4 | **Snowflake DM_F_FI_AR_AGING** | ⭐⭐⭐ | 매출채권 상세 | TP채권 미포함, CSV 대조 필요 |
+| 5 | **SAP ZFIR0580 (수동)** | ⭐⭐⭐⭐⭐ | TP채권 확인 | Snowflake 미반영 항목 |
+| 6 | **가이드 연환산 추정** | ⭐⭐⭐ | ROE/ROA 참고 | 법인세율 25.5%/26.5% 적용 |
+
+**불일치 발생 시 우선순위**:
+```
+1순위: CSV 총액 (재무팀 공식)
+2순위: SAP ZFIR0580 수동 조회
+3순위: Snowflake (참고/상세 분석)
+```
+
+**매출채권 예시 (26.1월)**:
+```
+CSV 총액: 2,350억
+Snowflake DM_F_FI_AR_AGING: 2,139억
+차이: 211억 (TP채권, FI전표)
+
+→ CSV 2,350억을 기준으로 하고,
+  211억을 홍콩/대만 지역에 별도 주석 표기
+```
+
+---
+
+### 14.4 월간 업데이트 소요 시간 (예상)
+
+| 단계 | 작업 내용 | 소요 시간 | 비고 |
+|:---|:---|---:|:---|
+| **Phase 1** | Snowflake 쿼리 (당기+전년) | 30분 | SQL 복사/수정, 결과 저장 |
+| | CSV 파일 읽기 (3개월) | 10분 | 25.1, 25.12, 26.1 |
+| | 데이터 검증 (합계 확인) | 15분 | 매출 일치, BS 균형 |
+| **Phase 2** | 2026-01.json 작성 | 45분 | financialData → ratios 순서대로 |
+| | 2025-01.json 업데이트 | 15분 | 전년 비교 기준 |
+| **Phase 3** | JSON 검증 (계산 재확인) | 20분 | 엑셀 검산, 비율 확인 |
+| | 브라우저 테스트 | 15분 | 3개 탭 모두 확인 |
+| **Phase 4** | 오류 수정 (있을 경우) | 30분 | 캐시 삭제, 서버 재시작 |
+| **합계** | | **약 3시간** | 숙련 시 2시간 이내 가능 |
+
+**단축 팁**:
+- SQL 쿼리 템플릿 저장 (날짜만 변경)
+- 엑셀 검산 시트 미리 준비
+- 이전 월 JSON 복사 후 값만 교체
+- 개발 서버 미리 실행
+
+---
+
+## 15. 버전 히스토리
+
+| 버전 | 날짜 | 주요 변경사항 |
+|:---:|:---|:---|
+| 8.0 | 2026-02-11 | • **회전율 분석 NaN 오류 해결 가이드 추가** (오류 5)<br>• 단월 vs 연환산 매출 사용 원칙 명확화<br>• 데이터 구조 일관성 체크리스트 추가<br>• 변수 선언 순서 오류 사례 문서화<br>• balance-sheet/page.tsx 전면 수정 가이드<br>• ReferenceError 디버깅 방법 정리 |
+| 7.0 | 2026-02-11 | • 자주 발생하는 오류 및 해결방법 추가 (14장)<br>• 월간 업데이트 정확한 작성 순서 가이드 추가<br>• ROE/ROA 법인세율 적용 계산법 정리<br>• 데이터 정합성 검증 체크리스트 추가<br>• 26.1월 실제 작업 중 발생한 4대 오류 사례 문서화 |
+| 6.0 | 2026-02-10 | • 매출채권 지역별 분류 원칙 (4.6장)<br>• TP채권 처리 방법 추가<br>• 대만 → 홍콩/마카오/대만 그룹 분류 |
+| 5.0 | 2026-02-09 | • 기준월 변경 원칙 (12장)<br>• MoM/YoY 비교 기준 명확화 |
+| 4.0 | 2026-02-08 | • 재무상태표 3개월 비교 구조<br>• 여신검증 3개월 매출 기준 |
+
+---
+
+*Generated by Claude - FNF Dashboard Monthly Update Guide v8.0*
