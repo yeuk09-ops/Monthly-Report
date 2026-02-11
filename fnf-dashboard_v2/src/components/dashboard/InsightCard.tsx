@@ -13,7 +13,7 @@ export function InsightCard({ type, title, items }: InsightCardProps) {
   const isPositive = type === 'positive';
 
   return (
-    <Card className="shadow-sm border-0 bg-white overflow-hidden">
+    <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
       <div className={`h-1 ${isPositive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
       <CardHeader className="pb-2 pt-4">
         <CardTitle className={`flex items-center gap-2 text-base font-semibold ${isPositive ? 'text-emerald-700' : 'text-amber-700'}`}>

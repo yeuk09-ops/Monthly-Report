@@ -236,16 +236,16 @@
   ],
   "aiInsights": {
     "positive": [
-      "<strong>재무 구조의 질적 전환</strong>: 무차입 경영 달성(차입금 200억→0억) 및 현금 219% 급증(990억→3,158억)으로 재무 건전성이 업계 최고 수준에 도달. 순차입금비율 △16.9%는 현금부자 기업으로의 전환을 의미하며, 향후 M&A·배당·자사주매입 등 공격적 주주가치 제고 정책 실행 여력 확보",
-      "<strong>수익성 방어 성공</strong>: 매출총이익률 64.9% 유지(전년 64.8%)는 원가 상승 압력 속에서도 가격결정력(pricing power)을 방어했음을 입증. 수출 중심 매출 구조(54.4%)와 MLB 브랜드 파워가 마진 방어의 핵심 동력. 프리미엄 브랜드 전략의 성공적 실행으로 평가",
-      "<strong>운전자본 효율성 극대화</strong>: CCC 46일 달성(전년 73일 대비 △27일, △37% 개선)은 자산회전율 개선의 결정적 증거. 재고회전일수 6일 단축(59→53일) + 매입채무회전일수 19일 연장(38→57일)이 현금흐름 개선을 견인. 이는 공급망 협상력 강화 및 재고 관리 고도화의 성과",
-      "<strong>자본 축적을 통한 성장 기반 강화</strong>: 이익잉여금 26.5% 증가(12,645억→15,999억)는 안정적 이익 창출 능력을 보여주며, 자기자본비율 81.3%는 경기 침체기에도 견딜 수 있는 재무 완충력(financial cushion) 확보를 의미. ROE 27% 수준 유지 시 3년 내 자본 2배 달성 가능"
+      "<strong class='text-emerald-600 font-bold'>재무 구조의 질적 전환</strong>: <span class='font-semibold text-slate-800'>무차입 경영 달성</span>(차입금 200억→0억) 및 <span class='font-semibold text-blue-600'>현금 219% 급증</span>(990억→3,158억)으로 재무 건전성이 <span class='bg-emerald-100 px-1 py-0.5 rounded'>업계 최고 수준</span> 도달. 순차입금비율 <strong>△16.9%</strong>는 현금부자 기업으로의 전환을 의미하며, M&A·배당·자사주매입 등 <span class='text-emerald-600 font-semibold'>공격적 주주가치 제고</span> 정책 실행 여력 확보",
+      "<strong class='text-emerald-600 font-bold'>수익성 방어 성공</strong>: <span class='font-semibold'>매출총이익률 64.9%</span> 유지(전년 64.8%)는 원가 상승 압력 속에서도 <span class='bg-blue-100 px-1 py-0.5 rounded'>가격결정력(Pricing Power)</span>을 방어. 수출 중심 매출 구조(<strong>54.4%</strong>)와 <span class='font-semibold text-blue-600'>MLB 브랜드 파워</span>가 마진 방어의 핵심 동력. 프리미엄 브랜드 전략의 성공적 실행",
+      "<strong class='text-emerald-600 font-bold'>운전자본 효율성 극대화</strong>: <span class='font-semibold text-blue-600'>CCC 46일</span> 달성(전년 73일 대비 <strong>△27일, △37% 개선</strong>)은 자산회전율 개선의 결정적 증거. <span class='bg-emerald-100 px-1 py-0.5 rounded'>재고회전일수 6일 단축</span>(59→53일) + <span class='bg-emerald-100 px-1 py-0.5 rounded'>매입채무회전일수 19일 연장</span>(38→57일)이 현금흐름 개선 견인. 공급망 협상력 강화 및 재고 관리 고도화의 성과",
+      "<strong class='text-emerald-600 font-bold'>자본 축적을 통한 성장 기반 강화</strong>: <span class='font-semibold'>이익잉여금 26.5% 증가</span>(12,645억→15,999억)는 안정적 이익 창출 능력을 입증. <span class='font-semibold text-blue-600'>자기자본비율 81.3%</span>는 경기 침체기에도 견딜 수 있는 <span class='bg-blue-100 px-1 py-0.5 rounded'>재무 완충력(Financial Cushion)</span> 확보. ROE 27% 유지 시 <strong>3년 내 자본 2배</strong> 달성 가능"
     ],
     "warning": [
-      "<strong>매출 성장 모멘텀 둔화 징후</strong>: 1월 매출 0.3% 감소(1,643억→1,638억)는 비수기 계절성으로 해석 가능하나, 수출매출 5.9% 감소(947억→891억)는 우려 요인. 특히 중국 시장 의존도를 고려할 때 2~3월 매출 추이 모니터링이 중요. 신규 시장 다각화(동남아·북미) 전략 가속화 필요",
-      "<strong>매출채권 관리 리스크 부각</strong>: 매출채권 19.3% 급증(1,970억→2,350억)은 수출채권 증가에 기인하나, 홍콩/대만 채권 회수기간 10.5개월(정상 3개월 대비 3.5배)은 유동성 리스크 및 대손 가능성을 내포. TP채권 211억 별도 관리 필요. DSO 50일은 양호하나 지역별 편차가 심화되고 있어 선별적 신용 관리 강화 필요",
-      "<strong>채널 수익성 구조 변화</strong>: 점수수료 5.5% 증가(163억→172억)는 백화점 채널 비중 확대를 시사하며, 이는 고마진 채널 확대의 긍정적 측면이 있으나 점수수료율(10.5%) 상승은 순수익성(net profitability) 압박 요인. 채널별 ROI 분석을 통한 최적 채널 믹스 전략 재정립 필요",
-      "<strong>법인세부채 급증의 이중성</strong>: 법인세부채 26.2% 증가(811억→1,023억)는 높은 수익성의 반증이나, 동시에 현금유출 압력으로 작용. 1분기 세금 납부 후 현금흐름 관리 및 세무 계획(tax planning) 최적화 필요. 연구개발비·투자세액공제 등 세무 인센티브 적극 활용 검토"
+      "<strong class='text-amber-600 font-bold'>수출 구조 변화 주시 필요</strong>: 1월 <span class='font-semibold'>수출매출 5.9% 감소</span>(947억→891억)는 <span class='bg-amber-100 px-1 py-0.5 rounded'>중국 재고관리 조정</span>에 기인. 중국 현지 재고 최적화를 위한 <span class='text-amber-600 font-semibold'>국내출고 일시 조정 중</span>으로 2~3월 정상화 예상되나, <span class='font-semibold text-slate-800'>중국 시장 의존도(약 40%)</span>를 고려 시 <strong>동남아·북미 시장 다각화</strong> 전략 가속화 필요. 내수는 비수기 계절성으로 <span class='text-amber-600'>△0.3%</span> 감소",
+      "<strong class='text-amber-600 font-bold'>매출채권 구조적 관리 강화</strong>: 매출채권 <span class='font-semibold'>19.3% 급증</span>(1,970억→2,350억)은 수출채권 증가에 기인. <span class='bg-red-100 px-1 py-0.5 rounded font-semibold'>홍콩/대만 채권 회수기간 10.5개월</span>(정상 3개월 대비 <strong>3.5배</strong>)은 TP채권 특성상 유동성 리스크 내포. <span class='font-semibold text-amber-600'>TP채권 211억 별도 관리</span> 필요. 전체 DSO <span class='font-semibold text-blue-600'>50일</span>은 양호하나 지역별 편차 심화로 <strong>선별적 신용 관리</strong> 강화 필요",
+      "<strong class='text-amber-600 font-bold'>채널 믹스 최적화 요구</strong>: <span class='font-semibold'>점수수료 5.5% 증가</span>(163억→172억)는 <span class='bg-amber-100 px-1 py-0.5 rounded'>백화점 채널 비중 확대</span> 시사. 고마진 채널 확대는 긍정적이나 <span class='font-semibold text-amber-600'>점수수료율 10.5%</span> 상승은 순수익성(Net Profitability) 압박 요인. <strong>채널별 ROI 분석</strong>을 통한 최적 채널 믹스 전략 재정립 필요",
+      "<strong class='text-amber-600 font-bold'>법인세 현금유출 관리</strong>: 법인세부채 <span class='font-semibold'>26.2% 증가</span>(811억→1,023억)는 높은 수익성의 반증이나, 1분기 <span class='bg-amber-100 px-1 py-0.5 rounded'>세금 납부 후 현금흐름 관리</span> 필요. <span class='font-semibold text-blue-600'>연구개발비·투자세액공제</span> 등 세무 인센티브 적극 활용 검토로 <strong>실효 세율 최적화</strong> 필요"
     ]
   },
   "ratios": {
