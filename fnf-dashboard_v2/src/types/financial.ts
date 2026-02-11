@@ -51,6 +51,9 @@ export interface IncomeItem {
   previous: number;
   change: number;
   changePercent: number;
+  ratio?: number;
+  isPercentage?: boolean;
+  note?: string;
 }
 
 export interface IncomeStatement {
@@ -172,6 +175,33 @@ export interface ReportMeta {
   status: 'draft' | 'published';
 }
 
+// 연환산 데이터
+export interface AnnualizedData {
+  note: string;
+  revenue: number;
+  netSales: number;
+  cogs: number;
+  grossProfit: number;
+  operatingProfit: number;
+  operatingMargin: number;
+}
+
+// 재무 비율
+export interface RatioValue {
+  current: number;
+  previous: number;
+  annualized: number;
+}
+
+export interface Ratios {
+  profitability: {
+    grossMargin: RatioValue;
+    operatingMargin: RatioValue;
+    roe: RatioValue;
+    roa: RatioValue;
+  };
+}
+
 // 전체 월별 리포트 데이터
 export interface MonthlyReportData {
   meta: ReportMeta;
@@ -184,4 +214,6 @@ export interface MonthlyReportData {
   workingCapital: WorkingCapital;
   creditVerification: CreditVerificationItem[];
   aiInsights: AIInsights;
+  annualized?: AnnualizedData;
+  ratios?: Ratios;
 }

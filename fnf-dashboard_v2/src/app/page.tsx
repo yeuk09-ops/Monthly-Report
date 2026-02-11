@@ -18,8 +18,8 @@ export default function DashboardPage() {
     const d = reportData.financialData;
     const incomeStmt = reportData.incomeStatement;
 
-    const calcGrowth = (curr: number, prev: number) =>
-      prev !== 0 ? ((curr - prev) / prev * 100) : 0;
+    const calcGrowth = (curr: number, prev: number | undefined) =>
+      prev && prev !== 0 ? ((curr - prev) / prev * 100) : 0;
 
     // 수익성 지표 - 손익계산서의 ratio 값 사용 (incomeStatement.*.ratio)
     // 당기: 26년 1월 incomeStatement.ratio
@@ -44,20 +44,26 @@ export default function DashboardPage() {
     // 안정성 지표 - YoY 기준 (전년동월 대비)
     const debtRatio = {
       current: (d.totalLiabilities.current / d.equity.current * 100),
-      previousYear: (d.totalLiabilities.previousYear / d.equity.previousYear * 100)
+      previousYear: (d.totalLiabilities.previousYear && d.equity.previousYear)
+        ? (d.totalLiabilities.previousYear / d.equity.previousYear * 100)
+        : 0
     };
     const netDebt = {
       current: d.borrowings.current - d.cash.current,
-      previousMonth: d.borrowings.previousMonth - d.cash.previousMonth,
-      previousYear: d.borrowings.previousYear - d.cash.previousYear
+      previousMonth: (d.borrowings.previousMonth || 0) - (d.cash.previousMonth || 0),
+      previousYear: (d.borrowings.previousYear || 0) - (d.cash.previousYear || 0)
     };
     const netDebtRatio = {
       current: (netDebt.current / d.equity.current * 100),
-      previousYear: (netDebt.previousYear / d.equity.previousYear * 100)
+      previousYear: (d.equity.previousYear)
+        ? (netDebt.previousYear / d.equity.previousYear * 100)
+        : 0
     };
     const equityRatio = {
       current: (d.equity.current / d.totalAssets.current * 100),
-      previousYear: (d.equity.previousYear / d.totalAssets.previousYear * 100)
+      previousYear: (d.equity.previousYear && d.totalAssets.previousYear)
+        ? (d.equity.previousYear / d.totalAssets.previousYear * 100)
+        : 0
     };
 
     // 활동성 지표 - 연환산 기준 사용
@@ -90,13 +96,11 @@ export default function DashboardPage() {
       current: avgReceivables > 0 ? annualizedRevenue / avgReceivables : 0,
       previousYear: avgReceivablesYoY > 0 ? prevAnnualizedRevenue / avgReceivablesYoY : 0
     };
-    console.log('receivablesTurnover:', receivablesTurnover);
 
     const dso = {
       current: receivablesTurnover.current > 0 ? 365 / receivablesTurnover.current : 0,
       previousYear: receivablesTurnover.previousYear > 0 ? 365 / receivablesTurnover.previousYear : 0
     };
-    console.log('DSO:', dso);
 
     const inventoryTurnover = {
       current: avgInventory > 0 ? annualizedCogs / avgInventory : 0,
@@ -186,11 +190,11 @@ export default function DashboardPage() {
   const m = calculatedMetrics;
   const month = reportData.meta.month;
 
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number | undefined) => {
     if (num === null || num === undefined || isNaN(num) || !isFinite(num)) return '-';
     return num.toLocaleString('ko-KR');
   };
-  const formatPercent = (num: number) => {
+  const formatPercent = (num: number | undefined) => {
     if (num === null || num === undefined || isNaN(num) || !isFinite(num)) return '-';
     return num.toFixed(1);
   };
@@ -325,7 +329,7 @@ export default function DashboardPage() {
               <ul className="space-y-1.5 ml-1">
                 <li className="flex items-start gap-2">
                   <span className="text-slate-400">•</span>
-                  <span>총자산: {(d.totalAssets.previousMonth/10000).toFixed(2)}조 → {(d.totalAssets.current/10000).toFixed(2)}조 ({(d.totalAssets.current - d.totalAssets.previousMonth) > 0 ? '+' : ''}{formatNumber(d.totalAssets.current - d.totalAssets.previousMonth)}억, {m.assetMomGrowth > 0 ? '+' : ''}{formatPercent(m.assetMomGrowth)}%)</span>
+                  <span>총자산: {((d.totalAssets.previousMonth || 0)/10000).toFixed(2)}조 → {(d.totalAssets.current/10000).toFixed(2)}조 ({(d.totalAssets.current - (d.totalAssets.previousMonth || 0)) > 0 ? '+' : ''}{formatNumber(d.totalAssets.current - (d.totalAssets.previousMonth || 0))}억, {m.assetMomGrowth > 0 ? '+' : ''}{formatPercent(m.assetMomGrowth)}%)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-slate-400">•</span>
@@ -400,9 +404,6 @@ export default function DashboardPage() {
         <div className="h-1 bg-amber-500" />
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-slate-800">활동성 지표 (회전율/회전일수)</CardTitle>
-          <div className="text-xs text-red-500 mt-2">
-            DEBUG: receivablesTurnover = {JSON.stringify(m.receivablesTurnover)} | dso = {JSON.stringify(m.dso)}
-          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

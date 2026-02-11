@@ -20,7 +20,15 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate: 26년 1월 기준월 변경 및 재무 분석 체계 개선\n\n주요 변경사항:\n- 기준월 변경: 25.12월 → 26.1월\n- MoM/YoY 비교 체계 분리 \\(전월 대비 vs 전년동월 대비\\)\n- 재무상태표 3개월 비교 구조 \\(25.1월/25.12월/26.1월\\)\n- 연환산 계산 적용 \\(ROE, ROA, 회전율 × 12\\)\n- workingCapital 세부 데이터 복구 \\(AR/재고 분석\\)\n- NaN 값 방지 처리 \\(formatNumber/RatioCard\\)\n\n데이터 구조:\n- financialData: previousMonth, previousYear 분리\n- balanceSheet: jan25, dec25, jan26 + momChange, yoyChange\n- creditVerification: 11월, 12월, 1월 \\(최근 3개월\\)\n- workingCapital: ar, inventory 세부 데이터 추가\n\n가이드 업데이트:\n- v5.0: 기준월 변경 원칙 추가\n- 연환산 계산 방법론 명시\n- JSON 구조 및 작업 체크리스트 추가\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
       "Bash(vercel:*)",
-      "Bash(timeout 10 tail:*)"
+      "Bash(timeout 10 tail:*)",
+      "Bash(/tmp/check_other_receivables.py:*)",
+      "Bash(__NEW_LINE_ec3de16379ea4fdc__ cd \"C:\\\\Users\\\\AC1144\\\\AI_Fin_Analysis\\\\Claude\\\\Monthly_Report\\\\fnf-dashboard_v2\")",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(timeout:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(lsof:*)"
     ]
   }
 }
