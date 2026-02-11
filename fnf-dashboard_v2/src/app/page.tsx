@@ -2,7 +2,8 @@
 
 import { useMemo } from 'react';
 import { useReport } from '@/components/providers/ReportContext';
-import { KPICard, InsightCard, RatioCard } from '@/components/dashboard';
+import { KPICard, RatioCard } from '@/components/dashboard';
+import { UnifiedInsightCard } from '@/components/dashboard/UnifiedInsightCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, TrendingUp, TrendingDown, DollarSign, Building2, PiggyBank } from 'lucide-react';
 import prevReportData from '@/data/2025-01.json';
@@ -273,94 +274,13 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Summary Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
-          <div className="h-1 bg-blue-500" />
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold text-slate-800">수익성 분석</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm text-slate-600">
-            <div>
-              <p className="font-semibold text-emerald-600 mb-2">매출 성장세 지속</p>
-              <ul className="space-y-1.5 ml-1">
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>실판매출(V-) {formatNumber(d.revenue.previousYear)}억 → {formatNumber(d.revenue.current)}억 <span className="text-emerald-500 font-medium">({m.revenueYoyGrowth > 0 ? '+' : ''}{formatPercent(m.revenueYoyGrowth)}%)</span></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>영업이익 {formatNumber(d.operatingProfit.previousYear)}억 → {formatNumber(d.operatingProfit.current)}억 <span className="text-emerald-500 font-medium">({m.opProfitYoyGrowth > 0 ? '+' : ''}{formatPercent(m.opProfitYoyGrowth)}%)</span></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>영업이익률 {formatPercent(m.opMargin.previousYear)}% → {formatPercent(m.opMargin.current)}% ({(m.opMargin.current - m.opMargin.previousYear) > 0 ? '+' : ''}{formatPercent(m.opMargin.current - m.opMargin.previousYear)}%p)</span>
-                </li>
-              </ul>
-            </div>
-            <div className="pt-2 border-t border-slate-100">
-              <p className="font-semibold text-blue-600 mb-2">수출 매출 고성장</p>
-              <ul className="space-y-1.5 ml-1">
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>수출매출 {formatNumber(d.exportRevenue.previousYear)}억 → {formatNumber(d.exportRevenue.current)}억 <span className="text-emerald-500 font-medium">({m.exportYoyGrowth > 0 ? '+' : ''}{formatPercent(m.exportYoyGrowth)}%)</span></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>수출 비중 {formatPercent(m.exportRatio.previousYear)}% → {formatPercent(m.exportRatio.current)}% ({(m.exportRatio.current - m.exportRatio.previousYear) > 0 ? '+' : ''}{formatPercent(m.exportRatio.current - m.exportRatio.previousYear)}%p)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>수익성 개선의 핵심 동력</span>
-                </li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
-          <div className="h-1 bg-slate-600" />
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold text-slate-800">재무 현황</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm text-slate-600">
-            <div>
-              <p className="font-semibold text-slate-700 mb-2">자산 구조 (12월 기준)</p>
-              <ul className="space-y-1.5 ml-1">
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>총자산: {((d.totalAssets.previousMonth || 0)/10000).toFixed(2)}조 → {(d.totalAssets.current/10000).toFixed(2)}조 ({(d.totalAssets.current - (d.totalAssets.previousMonth || 0)) > 0 ? '+' : ''}{formatNumber(d.totalAssets.current - (d.totalAssets.previousMonth || 0))}억, {m.assetMomGrowth > 0 ? '+' : ''}{formatPercent(m.assetMomGrowth)}%)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>현금: {formatNumber(d.cash.previousMonth)}억 → {formatNumber(d.cash.current)}억 <span className="text-emerald-500 font-medium">({(d.cash.current - d.cash.previousMonth) > 0 ? '+' : ''}{formatNumber(d.cash.current - d.cash.previousMonth)}억, {m.cashMomGrowth > 0 ? '+' : ''}{formatPercent(m.cashMomGrowth)}%)</span></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>재고자산: {formatNumber(d.inventory.previousMonth)}억 → {formatNumber(d.inventory.current)}억 ({d.inventory.current - d.inventory.previousMonth > 0 ? '+' : ''}{formatNumber(d.inventory.current - d.inventory.previousMonth)}억)</span>
-                </li>
-              </ul>
-            </div>
-            <div className="pt-2 border-t border-slate-100">
-              <p className="font-semibold text-emerald-600 mb-2">무차입 경영 유지</p>
-              <ul className="space-y-1.5 ml-1">
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>총부채: {formatNumber(d.totalLiabilities.previousMonth)}억 → {formatNumber(d.totalLiabilities.current)}억 ({(d.totalLiabilities.current - d.totalLiabilities.previousMonth) > 0 ? '+' : ''}{formatNumber(d.totalLiabilities.current - d.totalLiabilities.previousMonth)}억)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>차입금: <span className="font-semibold text-emerald-600">{formatNumber(d.borrowings.current)}원</span> (무차입 경영 유지)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-slate-400">•</span>
-                  <span>부채비율: {formatPercent(m.debtRatio.previousYear)}% → {formatPercent(m.debtRatio.current)}% <span className="text-emerald-500 font-medium">({(m.debtRatio.current - m.debtRatio.previousYear) > 0 ? '+' : ''}{formatPercent(m.debtRatio.current - m.debtRatio.previousYear)}%p)</span></span>
-                </li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* AI 재무 인사이트 (통합) */}
+      {reportData.unifiedInsights && (
+        <UnifiedInsightCard
+          positiveInsights={reportData.unifiedInsights.positive}
+          warningInsights={reportData.unifiedInsights.warning}
+        />
+      )}
 
       {/* 수익성 지표 */}
       <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
@@ -416,20 +336,6 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* AI Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <InsightCard
-          type="positive"
-          title="긍정적 시그널"
-          items={reportData.aiInsights.positive}
-        />
-        <InsightCard
-          type="warning"
-          title="모니터링 필요"
-          items={reportData.aiInsights.warning}
-        />
-      </div>
 
       {/* 계산식 참고 */}
       <Card className="shadow-md hover:shadow-xl transition-all duration-300 border-0 bg-slate-800 text-white">

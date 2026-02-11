@@ -166,6 +166,18 @@ export interface AIInsights {
   warning: string[];
 }
 
+// 통합 AI 인사이트 (키워드 기반)
+export interface InsightItem {
+  keyword: string;
+  analysis: string;
+  action?: string;
+}
+
+export interface UnifiedInsights {
+  positive: InsightItem[];
+  warning: InsightItem[];
+}
+
 // 메타 데이터
 export interface ReportMeta {
   year: number;
@@ -214,6 +226,7 @@ export interface MonthlyReportData {
   workingCapital: WorkingCapital;
   creditVerification: CreditVerificationItem[];
   aiInsights: AIInsights;
+  unifiedInsights?: UnifiedInsights;
   annualized?: AnnualizedData;
   ratios?: Ratios;
 }
