@@ -44,7 +44,7 @@ export function Header() {
     : '';
 
   return (
-    <header className="bg-gradient-to-r from-slate-800 to-slate-700 text-white shadow-lg">
+    <header className="bg-gradient-to-r from-indigo-900 via-blue-800 to-blue-700 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Title and Navigation */}
