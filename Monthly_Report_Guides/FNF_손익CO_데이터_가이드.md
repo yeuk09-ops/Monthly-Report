@@ -277,6 +277,176 @@ WHERE PST_DT >= '{PREV_YEAR}-{BASE_MONTH+1}-01' AND PST_DT <= '{PREV_YEAR}-12-31
 -- ※ 기준월이 12월인 경우 연환산 불필요 (12개월 완료)
 ```
 
+### 5.5 할인율/출고율 분리 조회 (국내 vs 수출) ★NEW
+
+> **v11.0 변경사항**: 기존 단일 "할인율"을 국내 소매 할인율과 수출 도매 출고율로 분리
+
+#### 5.5.1 개념 구분
+
+| 구분 | 용어 | 채널 필터 | 의미 | 일반 범위 |
+|:---:|:---|:---|:---|:---|
+| **국내** | 할인율 (국내) | CHNL_CD != '9' | 소매 채널에서 소비자에게 제공하는 할인 | 10~30% |
+| **수출** | 출고율 (수출) | CHNL_CD = '9' | 도매/수출 채널의 택가 대비 출고 비율 | 50~60% |
+
+**예시 (26년 1월)**:
+```
+국내 소매: 택가 1,054억 → 실판매 747억 → 할인율 29.1%
+- 백화점, 면세점, 직영점 등에서 소비자가 평균 29.1% 할인받고 구매
+
+수출 도매: 택가 1,942억 → 실판매 891억 → 출고율 54.1%
+- 중국, 홍콩 등 수출 바이어가 택가의 54.1%를 할인받고 도매 구매
+```
+
+#### 5.5.2 통합 조회 쿼리
+
+```sql
+-- 국내 vs 수출 TAG와 실판매 분리 조회
+-- ※ 기준월에 맞게 날짜 필터 수정: {BASE_YEAR}-{BASE_MONTH}-01 ~ {BASE_YEAR}-{BASE_MONTH}-말일
+-- ⚠️ 필수 필터: CORP_CD = '1000', BRD_CD IN ('M','I','X','V','ST')
+
+SELECT
+    -- 국내 (CHNL_CD != '9')
+    ROUND(SUM(CASE WHEN CHNL_CD != '9' THEN TAG_SALE_AMT ELSE 0 END) / 100000000, 0) AS DOMESTIC_TAG,
+    ROUND(SUM(CASE WHEN CHNL_CD != '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) / 100000000, 0) AS DOMESTIC_SALE,
+
+    -- 할인율 (국내) 계산: (택가 - 실판매) / 택가 × 100
+    ROUND((1 - (SUM(CASE WHEN CHNL_CD != '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) /
+                 NULLIF(SUM(CASE WHEN CHNL_CD != '9' THEN TAG_SALE_AMT ELSE 0 END), 0))) * 100, 1) AS DOMESTIC_DISCOUNT_RATE,
+
+    -- 수출 (CHNL_CD = '9')
+    ROUND(SUM(CASE WHEN CHNL_CD = '9' THEN TAG_SALE_AMT ELSE 0 END) / 100000000, 0) AS EXPORT_TAG,
+    ROUND(SUM(CASE WHEN CHNL_CD = '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) / 100000000, 0) AS EXPORT_SALE,
+
+    -- 출고율 (수출) 계산: (택가 - 실판매) / 택가 × 100
+    ROUND((1 - (SUM(CASE WHEN CHNL_CD = '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) /
+                 NULLIF(SUM(CASE WHEN CHNL_CD = '9' THEN TAG_SALE_AMT ELSE 0 END), 0))) * 100, 1) AS EXPORT_SHIPMENT_RATE
+
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT >= '2026-01-01' AND PST_DT <= '2026-01-31'
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+;
+
+-- 예시 (26년 1월 기준): PST_DT >= '2026-01-01' AND PST_DT <= '2026-01-31'
+-- 예시 (26년 2월 기준): PST_DT >= '2026-02-01' AND PST_DT <= '2026-02-29'
+```
+
+**결과 예시 (26년 1월)**:
+| DOMESTIC_TAG | DOMESTIC_SALE | DOMESTIC_DISCOUNT_RATE | EXPORT_TAG | EXPORT_SALE | EXPORT_SHIPMENT_RATE |
+|---:|---:|---:|---:|---:|---:|
+| 1,054 | 747 | 29.1 | 1,942 | 891 | 54.1 |
+
+#### 5.5.3 국내만 조회 (상세)
+
+```sql
+-- 국내 채널 할인율 조회
+-- ⚠️ 필수 필터: CORP_CD = '1000', BRD_CD IN ('M','I','X','V','ST'), CHNL_CD != '9'
+
+SELECT
+    -- 택가 (TAG 정가)
+    ROUND(SUM(TAG_SALE_AMT) / 100000000, 0) AS DOMESTIC_TAG,
+
+    -- 실판매출 (VAT 제외)
+    ROUND(SUM(VAT_EXC_ACT_SALE_AMT) / 100000000, 0) AS DOMESTIC_SALE,
+
+    -- 할인율 계산
+    ROUND((1 - (SUM(VAT_EXC_ACT_SALE_AMT) / NULLIF(SUM(TAG_SALE_AMT), 0))) * 100, 1) AS DOMESTIC_DISCOUNT_RATE
+
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT >= '2026-01-01' AND PST_DT <= '2026-01-31'
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+  AND CHNL_CD != '9'  -- 수출 제외
+;
+```
+
+**채널별 상세 조회**:
+```sql
+-- 국내 채널별 할인율 분석
+SELECT
+    CHNL_CD,
+    CASE CHNL_CD
+        WHEN '1' THEN '백화점'
+        WHEN '2' THEN '면세점'
+        WHEN '3' THEN '대리점'
+        WHEN '4' THEN '할인점'
+        WHEN '5' THEN '직영점'
+        WHEN '6' THEN '프랜차이즈'
+        WHEN '11' THEN '온라인'
+        ELSE '기타'
+    END AS CHANNEL_NAME,
+    ROUND(SUM(TAG_SALE_AMT) / 100000000, 0) AS TAG,
+    ROUND(SUM(VAT_EXC_ACT_SALE_AMT) / 100000000, 0) AS SALE,
+    ROUND((1 - (SUM(VAT_EXC_ACT_SALE_AMT) / NULLIF(SUM(TAG_SALE_AMT), 0))) * 100, 1) AS DISCOUNT_RATE
+
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT >= '2026-01-01' AND PST_DT <= '2026-01-31'
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+  AND CHNL_CD != '9'
+GROUP BY CHNL_CD
+ORDER BY SALE DESC
+;
+```
+
+#### 5.5.4 수출만 조회 (상세)
+
+```sql
+-- 수출 채널 출고율 조회
+-- ⚠️ 필수 필터: CORP_CD = '1000', BRD_CD IN ('M','I','X','V','ST'), CHNL_CD = '9'
+
+SELECT
+    -- 택가 (TAG 정가)
+    ROUND(SUM(TAG_SALE_AMT) / 100000000, 0) AS EXPORT_TAG,
+
+    -- 실판매출 (VAT 제외)
+    ROUND(SUM(VAT_EXC_ACT_SALE_AMT) / 100000000, 0) AS EXPORT_SALE,
+
+    -- 출고율 계산
+    ROUND((1 - (SUM(VAT_EXC_ACT_SALE_AMT) / NULLIF(SUM(TAG_SALE_AMT), 0))) * 100, 1) AS EXPORT_SHIPMENT_RATE
+
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT >= '2026-01-01' AND PST_DT <= '2026-01-31'
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+  AND CHNL_CD = '9'  -- 수출만
+;
+```
+
+#### 5.5.5 전년 동기 비교 (YoY)
+
+```sql
+-- 국내/수출 할인율·출고율 전년 비교
+SELECT
+    TO_CHAR(PST_DT, 'YYYY-MM') AS YYYYMM,
+
+    -- 국내 (CHNL_CD != '9')
+    ROUND(SUM(CASE WHEN CHNL_CD != '9' THEN TAG_SALE_AMT ELSE 0 END) / 100000000, 0) AS DOMESTIC_TAG,
+    ROUND(SUM(CASE WHEN CHNL_CD != '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) / 100000000, 0) AS DOMESTIC_SALE,
+    ROUND((1 - (SUM(CASE WHEN CHNL_CD != '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) /
+                 NULLIF(SUM(CASE WHEN CHNL_CD != '9' THEN TAG_SALE_AMT ELSE 0 END), 0))) * 100, 1) AS DOMESTIC_DISCOUNT_RATE,
+
+    -- 수출 (CHNL_CD = '9')
+    ROUND(SUM(CASE WHEN CHNL_CD = '9' THEN TAG_SALE_AMT ELSE 0 END) / 100000000, 0) AS EXPORT_TAG,
+    ROUND(SUM(CASE WHEN CHNL_CD = '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) / 100000000, 0) AS EXPORT_SALE,
+    ROUND((1 - (SUM(CASE WHEN CHNL_CD = '9' THEN VAT_EXC_ACT_SALE_AMT ELSE 0 END) /
+                 NULLIF(SUM(CASE WHEN CHNL_CD = '9' THEN TAG_SALE_AMT ELSE 0 END), 0))) * 100, 1) AS EXPORT_SHIPMENT_RATE
+
+FROM FNF.SAP_FNF.DW_COPA_D
+WHERE PST_DT IN ('2025-01-01', '2025-01-31', '2026-01-01', '2026-01-31')  -- 25년 1월, 26년 1월
+  AND CORP_CD = '1000'
+  AND BRD_CD IN ('M', 'I', 'X', 'V', 'ST')
+GROUP BY TO_CHAR(PST_DT, 'YYYY-MM')
+ORDER BY YYYYMM
+;
+```
+
+**결과 예시**:
+| YYYYMM | DOMESTIC_TAG | DOMESTIC_SALE | DOMESTIC_DISCOUNT_RATE | EXPORT_TAG | EXPORT_SALE | EXPORT_SHIPMENT_RATE |
+|:---:|---:|---:|---:|---:|---:|---:|
+| 2025-01 | 1,089 | 779 | 28.5 | 1,848 | 865 | 53.2 |
+| 2026-01 | 1,054 | 747 | 29.1 | 1,942 | 891 | 54.1 |
+
 ---
 
 ## 6. 계산 공식
@@ -312,6 +482,41 @@ WHERE PST_DT >= '{PREV_YEAR}-{BASE_MONTH+1}-01' AND PST_DT <= '{PREV_YEAR}-12-31
 ※ 기준월이 12월인 경우 연환산 = 해당년도 1~12월 실적 (전년도 데이터 불필요)
 ```
 
+### 6.4 할인율/출고율 계산 ★NEW
+
+**할인율 (국내)**:
+```
+할인율 (국내) = (국내TAG - 국내실판매) ÷ 국내TAG × 100
+             = (1 - 국내실판매 ÷ 국내TAG) × 100
+
+【예시: 26년 1월】
+국내TAG: 1,054억
+국내실판매: 747억
+할인율 (국내) = (1 - 747/1,054) × 100 = 29.1%
+```
+
+**출고율 (수출)**:
+```
+출고율 (수출) = (수출TAG - 수출실판매) ÷ 수출TAG × 100
+             = (1 - 수출실판매 ÷ 수출TAG) × 100
+
+【예시: 26년 1월】
+수출TAG: 1,942억
+수출실판매: 891억
+출고율 (수출) = (1 - 891/1,942) × 100 = 54.1%
+```
+
+**의미 해석**:
+- **할인율 (국내) 29.1%**: 소비자가 택가 대비 평균 29.1% 할인받고 구매
+- **출고율 (수출) 54.1%**: 수출 바이어가 택가의 54.1%를 할인받고 도매 구매
+  (또는 45.9% 가격에 판매)
+
+**추세 분석**:
+- 할인율 증가 → 마진 악화 (소비 부진, 경쟁 심화)
+- 할인율 감소 → 마진 개선 (브랜드 파워 강화)
+- 출고율 증가 → 수출 경쟁력 악화 (가격 인하)
+- 출고율 감소 → 수출 경쟁력 강화 (고가 판매)
+
 ---
 
 ## 7. 수익성 지표 (연환산 기준)
@@ -346,6 +551,13 @@ WHERE PST_DT >= '{PREV_YEAR}-{BASE_MONTH+1}-01' AND PST_DT <= '{PREV_YEAR}-12-31
 □ 브랜드별 합계 = 전체 매출액 (조정 포함)
 □ 국내 + 수출 = 전체 매출
 □ 연환산 = 1~11월 + 전년 12월
+
+【v11.0 추가 검증】
+□ 국내TAG + 수출TAG ≈ 전체TAG (±1~2억 허용)
+□ 국내실판매 + 수출실판매 ≈ 전체실판매(V-) (±1~2억 허용)
+□ 할인율 (국내) = (1 - 국내실판매/국내TAG) × 100
+□ 출고율 (수출) = (1 - 수출실판매/수출TAG) × 100
+□ 할인율 (국내) < 할인율 (수출) (일반적으로 국내 < 수출)
 ```
 
 ---
@@ -430,6 +642,7 @@ WHERE PST_DT >= '{PREV_YEAR}-{BASE_MONTH+1}-01' AND PST_DT <= '{PREV_YEAR}-12-31
    - 5.2 브랜드별 국내/수출 매출 분리
    - 5.3 판관비 상세 쿼리
    - 5.4 연환산용 전년 잔여월 데이터 (12월 미만인 경우)
+   - 5.5 할인율/출고율 분리 조회 ★NEW
 
 □ 3. 손익 구조 업데이트 (섹션 3)
    - 매출액, 점수수료, 출고매출, 원가, 판관비, 영업이익
@@ -439,9 +652,89 @@ WHERE PST_DT >= '{PREV_YEAR}-{BASE_MONTH+1}-01' AND PST_DT <= '{PREV_YEAR}-12-31
 
 □ 5. JSON 데이터 파일 업데이트
    - fnf-dashboard_v2/src/data/{BASE_YEAR}-{BASE_MONTH}.json
+   - incomeStatement.revenue 배열에 "할인율 (국내)" 추가 ★NEW
+   - incomeStatement.revenue 배열에 "출고율 (수출)" 추가 ★NEW
+   - incomeStatement.costs 배열 순서 변경 (매출총이익 두 번째 위치) ★NEW
 ```
+
+---
+
+## 13. v11.0 변경사항 요약 ★NEW
+
+### 13.1 할인율/출고율 분리
+
+**변경 사유**:
+- 국내 소매 채널과 수출 도매 채널의 가격 정책이 상이
+- 단일 할인율로는 채널별 마진 구조 파악 불가
+- 경영진 의사결정을 위한 상세 지표 필요
+
+**구현 방법**:
+| 항목 | Before (v10.0) | After (v11.0) |
+|:---|:---|:---|
+| **할인율** | 단일 "할인율" 45.3% | **할인율 (국내)** 29.1% |
+| | | **출고율 (수출)** 54.1% |
+| **계산** | (전체TAG - 전체실판매) / 전체TAG | 국내/수출 각각 분리 계산 |
+| **CHNL_CD 필터** | 전체 | 국내: != '9' / 수출: = '9' |
+
+### 13.2 JSON 구조 변경
+
+**incomeStatement.revenue 배열**:
+```json
+// Before
+{ "label": "할인율", "current": 45.3, "previous": 46.8 }
+
+// After
+{ "label": "할인율 (국내)", "current": 29.1, "previous": 28.5 },
+{ "label": "출고율 (수출)", "current": 54.1, "previous": 53.2 }
+```
+
+**incomeStatement.costs 배열 순서**:
+```json
+// Before
+[
+  { "label": "매출원가", ... },
+  { "label": "점수수료", ... },
+  { "label": "직접비(할인+간접할인)", ... },
+  { "label": "간접비", "current": 0, "note": "월별 미제공" }  // ← 삭제됨
+]
+
+// After
+[
+  { "label": "매출원가", ... },
+  { "label": "매출총이익", "ratio": 65.8 },  // ← grossProfit에서 이동
+  { "label": "점수수료", ... },
+  { "label": "판관비", ... }  // ← "직접비" 명칭 변경
+]
+```
+
+### 13.3 page.tsx 로직 변경
+
+**파일**: `fnf-dashboard_v2/src/app/income-statement/page.tsx`
+
+**변경 내용** (Line 151-154):
+```typescript
+// 할인율/출고율: 역방향 색상 로직
+if (item.label === '할인율 (국내)' || item.label === '출고율 (수출)') {
+  valueColor = isPositive ? 'text-emerald-600' : 'text-red-600';
+  percentColor = isPositive ? 'text-emerald-600' : 'text-red-600';
+  icon = isPositive ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />;
+}
+```
+
+**색상 의미**:
+- 녹색 (TrendingDown): 할인율/출고율 감소 = 마진 개선
+- 빨강 (TrendingUp): 할인율/출고율 증가 = 마진 악화
+
+### 13.4 참조 쿼리
+
+**섹션 5.5**: 할인율/출고율 분리 조회 (국내 vs 수출)
+- 5.5.2: 통합 조회 쿼리
+- 5.5.3: 국내만 조회
+- 5.5.4: 수출만 조회
+- 5.5.5: 전년 동기 비교 (YoY)
 
 ---
 
 *본 문서는 FNF 재무제표 대시보드의 손익(CO) 데이터 추출 및 계산 방법을 정리한 가이드입니다.*
 *기준월이 변경되면 {변수} 부분을 해당 기준월에 맞게 치환하여 사용하세요.*
+*v11.0부터 할인율/출고율 분리 계산이 적용되었습니다.*

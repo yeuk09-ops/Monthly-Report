@@ -1,0 +1,56 @@
+{
+  "report_date": "2026-02-12 12:45:14",
+  "data_period": {
+    "current": "2026-01",
+    "previous": "2025-12"
+  },
+  "source": "FNF.SAP_FNF.DW_COPA_D",
+  "calculations": {
+    "domestic_discount_rate": {
+      "formula": "(Domestic TAG - Domestic Actual Sales) / Domestic TAG × 100",
+      "filter": "CHNL_CD != \"9\"",
+      "january_2026": {
+        "tag": "1,054 billion KRW",
+        "actual_sales": "747 billion KRW",
+        "discount_rate": "29.13%"
+      },
+      "december_2025": {
+        "tag": "1,420 billion KRW",
+        "actual_sales": "994 billion KRW",
+        "discount_rate": "30.00%"
+      },
+      "change": {
+        "absolute": "-0.87%p",
+        "percentage": "-2.91%"
+      }
+    },
+    "export_shipment_rate": {
+      "formula": "(Export TAG - Export Sales) / Export TAG × 100",
+      "filter": "CHNL_CD = \"9\"",
+      "january_2026": {
+        "tag": "1,942 billion KRW",
+        "sales": "891 billion KRW",
+        "shipment_rate": "54.12%"
+      },
+      "december_2025": {
+        "tag": "2,458 billion KRW",
+        "sales": "1,113 billion KRW",
+        "shipment_rate": "54.72%"
+      },
+      "change": {
+        "absolute": "-0.60%p",
+        "percentage": "-1.10%"
+      }
+    }
+  },
+  "query_filters": {
+    "corp_cd": "1000",
+    "brd_cd": [
+      "M",
+      "I",
+      "X",
+      "V",
+      "ST"
+    ]
+  }
+}

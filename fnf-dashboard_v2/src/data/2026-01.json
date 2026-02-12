@@ -91,6 +91,18 @@
       "current": 15999,
       "previousMonth": 15585,
       "previousYear": 12645
+    },
+    "domesticDiscountRate": {
+      "current": 29.13,
+      "previous": 30.0,
+      "change": -0.87,
+      "changePercent": -2.91
+    },
+    "exportShipmentRate": {
+      "current": 54.12,
+      "previous": 54.72,
+      "change": -0.6,
+      "changePercent": -1.1
     }
   },
   "incomeStatement": {
@@ -128,6 +140,14 @@
         "ratio": 45.6
       },
       {
+        "label": "할인율 (국내)",
+        "current": 29.1,
+        "previous": 30.0,
+        "change": -0.9,
+        "changePercent": -3.0,
+        "isPercentage": true
+      },
+      {
         "label": "- 수출매출",
         "current": 891,
         "previous": 947,
@@ -136,11 +156,11 @@
         "ratio": 54.4
       },
       {
-        "label": "할인율",
-        "current": 45.3,
-        "previous": 43.7,
-        "change": 1.6,
-        "changePercent": 3.7,
+        "label": "출고율 (수출)",
+        "current": 45.9,
+        "previous": 45.3,
+        "change": 0.6,
+        "changePercent": 1.3,
         "isPercentage": true
       }
     ],
@@ -154,6 +174,14 @@
         "ratio": 35.1
       },
       {
+        "label": "매출총이익",
+        "current": 1064,
+        "previous": 1065,
+        "change": -1,
+        "changePercent": -0.1,
+        "ratio": 64.9
+      },
+      {
         "label": "점수수료",
         "current": 172,
         "previous": 163,
@@ -162,31 +190,14 @@
         "ratio": 10.5
       },
       {
-        "label": "직접비(할인+간접할인)",
+        "label": "판관비",
         "current": 250,
         "previous": 246,
         "change": 4,
         "changePercent": 1.6,
         "ratio": 15.3
-      },
-      {
-        "label": "간접비",
-        "current": 0,
-        "previous": 0,
-        "change": 0,
-        "changePercent": 0,
-        "ratio": 0,
-        "note": "월별 미제공"
       }
     ],
-    "grossProfit": {
-      "label": "매출총이익",
-      "current": 1064,
-      "previous": 1065,
-      "change": -1,
-      "changePercent": -0.1,
-      "ratio": 64.9
-    },
     "operatingProfit": {
       "label": "영업이익",
       "current": 642,
@@ -931,6 +942,11 @@
         "keyword": "💎 자본 축적 가속화",
         "analysis": "<span class='font-semibold text-blue-600'>이익잉여금 26.5% 증가</span>(1조 2,645억→1조 5,999억) + <span class='font-semibold text-emerald-600'>자기자본비율 81.3%</span>. 경기 침체기에도 견딜 수 있는 <span class='bg-blue-100 px-1 py-0.5 rounded'>재무 완충력(Financial Cushion)</span> 확보. <strong>ROE 19.7%</strong> 유지 시 3년 내 자본 2배 달성 가능",
         "action": "신규 브랜드 인수(M&A) 또는 해외 직진출 검토. 자본력 기반 공격적 성장 전략 수립"
+      },
+      {
+        "keyword": "💱 USD 자연 헤지 최적화",
+        "analysis": "USD 채무 <span class='text-red-600'>47.8M USD</span> 대비 USD 예금 <strong>69.4M USD</strong> 보유로 <span class='bg-emerald-100'>145% 커버율</span> 달성. 환율 리스크 <strong>자연 상쇄</strong> 구조",
+        "action": "현 포지션 유지. USD 예금 활용한 채무 상환 타이밍 최적화"
       }
     ],
     "warning": [
@@ -953,6 +969,16 @@
         "keyword": "⚠️ 법인세 현금유출 준비",
         "analysis": "법인세부채 <span class='font-semibold text-amber-600'>26.2% 증가</span>(811억→1,023억)는 높은 수익성의 반증이나, 1분기 <span class='bg-amber-100 px-1 py-0.5 rounded'>세금 납부 시 현금 1,000억 이상 유출</span> 예상. 현금흐름 관리 주의 필요",
         "action": "1분기 세금 납부 후 현금 포지션 점검. 연구개발비·투자세액공제 적극 활용으로 실효 세율 최적화"
+      },
+      {
+        "keyword": "⚠️ CNY 환노출 리스크",
+        "analysis": "CNY 채권 <strong>444.9M 위안화</strong> (<strong>924억원</strong>) 보유 중. 1월 환율 변동성 <span class='bg-amber-100'>3.69%</span>로 ±5% 환율 변동 시 <strong>±46억원</strong> 평가손익 발생",
+        "action": "CNY 선물환 헤지 전략 검토. 주요 채권 회수 일정 점검"
+      },
+      {
+        "keyword": "🛡️ 환헤지 전략 검토 필요",
+        "analysis": "CNY 변동성 <span class='font-semibold'>3.7%</span>로 높은 수준. 순포지션 1059억원 고려 시 <span class='bg-amber-100'>선물환 헤지</span> 검토 권장",
+        "action": "목표 헤지비율 30% 설정. CNY 선물환 318억원 견적 요청"
       }
     ]
   },
@@ -967,43 +993,265 @@
       "payableValuation": 1603491640
     },
     "rateTrends": [
-      { "date": "2025-02-03", "displayMonth": "2월", "CNY": 208.5, "USD": 1434.9, "HKD": 184.4 },
-      { "date": "2025-02-04", "displayMonth": null, "CNY": 209.2, "USD": 1438.2, "HKD": 184.6 },
-      { "date": "2025-02-05", "displayMonth": null, "CNY": 209.8, "USD": 1441.5, "HKD": 185.1 },
-      { "date": "2025-03-03", "displayMonth": "3월", "CNY": 210.5, "USD": 1445.0, "HKD": 185.8 },
-      { "date": "2025-03-04", "displayMonth": null, "CNY": 211.2, "USD": 1450.3, "HKD": 186.2 },
-      { "date": "2025-03-05", "displayMonth": null, "CNY": 210.8, "USD": 1448.5, "HKD": 186.0 },
-      { "date": "2025-04-01", "displayMonth": "4월", "CNY": 212.3, "USD": 1455.2, "HKD": 187.1 },
-      { "date": "2025-04-02", "displayMonth": null, "CNY": 212.5, "USD": 1458.0, "HKD": 187.5 },
-      { "date": "2025-04-03", "displayMonth": null, "CNY": 211.9, "USD": 1456.3, "HKD": 187.2 },
-      { "date": "2025-05-02", "displayMonth": "5월", "CNY": 211.5, "USD": 1460.5, "HKD": 188.0 },
-      { "date": "2025-05-06", "displayMonth": null, "CNY": 210.8, "USD": 1463.2, "HKD": 188.5 },
-      { "date": "2025-05-07", "displayMonth": null, "CNY": 210.2, "USD": 1461.8, "HKD": 188.2 },
-      { "date": "2025-06-02", "displayMonth": "6월", "CNY": 209.5, "USD": 1465.0, "HKD": 188.8 },
-      { "date": "2025-06-03", "displayMonth": null, "CNY": 208.8, "USD": 1467.5, "HKD": 189.2 },
-      { "date": "2025-06-04", "displayMonth": null, "CNY": 208.2, "USD": 1470.2, "HKD": 189.5 },
-      { "date": "2025-07-01", "displayMonth": "7월", "CNY": 207.5, "USD": 1472.8, "HKD": 189.3 },
-      { "date": "2025-07-02", "displayMonth": null, "CNY": 207.0, "USD": 1475.5, "HKD": 189.1 },
-      { "date": "2025-07-03", "displayMonth": null, "CNY": 206.8, "USD": 1477.5, "HKD": 188.9 },
-      { "date": "2025-08-01", "displayMonth": "8월", "CNY": 206.5, "USD": 1476.2, "HKD": 188.5 },
-      { "date": "2025-08-04", "displayMonth": null, "CNY": 206.2, "USD": 1473.8, "HKD": 188.2 },
-      { "date": "2025-08-05", "displayMonth": null, "CNY": 206.0, "USD": 1471.5, "HKD": 187.8 },
-      { "date": "2025-09-01", "displayMonth": "9월", "CNY": 205.8, "USD": 1468.2, "HKD": 187.5 },
-      { "date": "2025-09-02", "displayMonth": null, "CNY": 205.5, "USD": 1465.0, "HKD": 187.0 },
-      { "date": "2025-09-03", "displayMonth": null, "CNY": 205.3, "USD": 1462.5, "HKD": 186.5 },
-      { "date": "2025-10-02", "displayMonth": "10월", "CNY": 205.0, "USD": 1458.8, "HKD": 186.0 },
-      { "date": "2025-10-06", "displayMonth": null, "CNY": 204.8, "USD": 1455.2, "HKD": 185.5 },
-      { "date": "2025-10-07", "displayMonth": null, "CNY": 204.76, "USD": 1452.0, "HKD": 185.0 },
-      { "date": "2025-11-03", "displayMonth": "11월", "CNY": 205.2, "USD": 1448.5, "HKD": 184.5 },
-      { "date": "2025-11-04", "displayMonth": null, "CNY": 205.8, "USD": 1445.0, "HKD": 184.2 },
-      { "date": "2025-11-05", "displayMonth": null, "CNY": 206.2, "USD": 1442.3, "HKD": 183.8 },
-      { "date": "2025-12-02", "displayMonth": "12월", "CNY": 206.8, "USD": 1438.5, "HKD": 183.5 },
-      { "date": "2025-12-03", "displayMonth": null, "CNY": 207.5, "USD": 1435.2, "HKD": 183.2 },
-      { "date": "2025-12-04", "displayMonth": null, "CNY": 208.2, "USD": 1432.0, "HKD": 182.9 },
-      { "date": "2026-01-02", "displayMonth": "1월", "CNY": 208.5, "USD": 1430.5, "HKD": 183.5 },
-      { "date": "2026-01-06", "displayMonth": null, "CNY": 207.8, "USD": 1429.0, "HKD": 183.2 },
-      { "date": "2026-01-07", "displayMonth": null, "CNY": 207.2, "USD": 1428.5, "HKD": 183.0 },
-      { "date": "2026-01-31", "displayMonth": null, "CNY": 205.46, "USD": 1427.0, "HKD": 182.81 }
+      {
+        "date": "2025-02-03",
+        "displayMonth": "2월",
+        "CNY": 208.5,
+        "USD": 1434.9,
+        "HKD": 184.4
+      },
+      {
+        "date": "2025-02-04",
+        "displayMonth": null,
+        "CNY": 209.2,
+        "USD": 1438.2,
+        "HKD": 184.6
+      },
+      {
+        "date": "2025-02-05",
+        "displayMonth": null,
+        "CNY": 209.8,
+        "USD": 1441.5,
+        "HKD": 185.1
+      },
+      {
+        "date": "2025-03-03",
+        "displayMonth": "3월",
+        "CNY": 210.5,
+        "USD": 1445.0,
+        "HKD": 185.8
+      },
+      {
+        "date": "2025-03-04",
+        "displayMonth": null,
+        "CNY": 211.2,
+        "USD": 1450.3,
+        "HKD": 186.2
+      },
+      {
+        "date": "2025-03-05",
+        "displayMonth": null,
+        "CNY": 210.8,
+        "USD": 1448.5,
+        "HKD": 186.0
+      },
+      {
+        "date": "2025-04-01",
+        "displayMonth": "4월",
+        "CNY": 212.3,
+        "USD": 1455.2,
+        "HKD": 187.1
+      },
+      {
+        "date": "2025-04-02",
+        "displayMonth": null,
+        "CNY": 212.5,
+        "USD": 1458.0,
+        "HKD": 187.5
+      },
+      {
+        "date": "2025-04-03",
+        "displayMonth": null,
+        "CNY": 211.9,
+        "USD": 1456.3,
+        "HKD": 187.2
+      },
+      {
+        "date": "2025-05-02",
+        "displayMonth": "5월",
+        "CNY": 211.5,
+        "USD": 1460.5,
+        "HKD": 188.0
+      },
+      {
+        "date": "2025-05-06",
+        "displayMonth": null,
+        "CNY": 210.8,
+        "USD": 1463.2,
+        "HKD": 188.5
+      },
+      {
+        "date": "2025-05-07",
+        "displayMonth": null,
+        "CNY": 210.2,
+        "USD": 1461.8,
+        "HKD": 188.2
+      },
+      {
+        "date": "2025-06-02",
+        "displayMonth": "6월",
+        "CNY": 209.5,
+        "USD": 1465.0,
+        "HKD": 188.8
+      },
+      {
+        "date": "2025-06-03",
+        "displayMonth": null,
+        "CNY": 208.8,
+        "USD": 1467.5,
+        "HKD": 189.2
+      },
+      {
+        "date": "2025-06-04",
+        "displayMonth": null,
+        "CNY": 208.2,
+        "USD": 1470.2,
+        "HKD": 189.5
+      },
+      {
+        "date": "2025-07-01",
+        "displayMonth": "7월",
+        "CNY": 207.5,
+        "USD": 1472.8,
+        "HKD": 189.3
+      },
+      {
+        "date": "2025-07-02",
+        "displayMonth": null,
+        "CNY": 207.0,
+        "USD": 1475.5,
+        "HKD": 189.1
+      },
+      {
+        "date": "2025-07-03",
+        "displayMonth": null,
+        "CNY": 206.8,
+        "USD": 1477.5,
+        "HKD": 188.9
+      },
+      {
+        "date": "2025-08-01",
+        "displayMonth": "8월",
+        "CNY": 206.5,
+        "USD": 1476.2,
+        "HKD": 188.5
+      },
+      {
+        "date": "2025-08-04",
+        "displayMonth": null,
+        "CNY": 206.2,
+        "USD": 1473.8,
+        "HKD": 188.2
+      },
+      {
+        "date": "2025-08-05",
+        "displayMonth": null,
+        "CNY": 206.0,
+        "USD": 1471.5,
+        "HKD": 187.8
+      },
+      {
+        "date": "2025-09-01",
+        "displayMonth": "9월",
+        "CNY": 205.8,
+        "USD": 1468.2,
+        "HKD": 187.5
+      },
+      {
+        "date": "2025-09-02",
+        "displayMonth": null,
+        "CNY": 205.5,
+        "USD": 1465.0,
+        "HKD": 187.0
+      },
+      {
+        "date": "2025-09-03",
+        "displayMonth": null,
+        "CNY": 205.3,
+        "USD": 1462.5,
+        "HKD": 186.5
+      },
+      {
+        "date": "2025-10-02",
+        "displayMonth": "10월",
+        "CNY": 205.0,
+        "USD": 1458.8,
+        "HKD": 186.0
+      },
+      {
+        "date": "2025-10-06",
+        "displayMonth": null,
+        "CNY": 204.8,
+        "USD": 1455.2,
+        "HKD": 185.5
+      },
+      {
+        "date": "2025-10-07",
+        "displayMonth": null,
+        "CNY": 204.76,
+        "USD": 1452.0,
+        "HKD": 185.0
+      },
+      {
+        "date": "2025-11-03",
+        "displayMonth": "11월",
+        "CNY": 205.2,
+        "USD": 1448.5,
+        "HKD": 184.5
+      },
+      {
+        "date": "2025-11-04",
+        "displayMonth": null,
+        "CNY": 205.8,
+        "USD": 1445.0,
+        "HKD": 184.2
+      },
+      {
+        "date": "2025-11-05",
+        "displayMonth": null,
+        "CNY": 206.2,
+        "USD": 1442.3,
+        "HKD": 183.8
+      },
+      {
+        "date": "2025-12-02",
+        "displayMonth": "12월",
+        "CNY": 206.8,
+        "USD": 1438.5,
+        "HKD": 183.5
+      },
+      {
+        "date": "2025-12-03",
+        "displayMonth": null,
+        "CNY": 207.5,
+        "USD": 1435.2,
+        "HKD": 183.2
+      },
+      {
+        "date": "2025-12-04",
+        "displayMonth": null,
+        "CNY": 208.2,
+        "USD": 1432.0,
+        "HKD": 182.9
+      },
+      {
+        "date": "2026-01-02",
+        "displayMonth": "1월",
+        "CNY": 208.5,
+        "USD": 1430.5,
+        "HKD": 183.5
+      },
+      {
+        "date": "2026-01-06",
+        "displayMonth": null,
+        "CNY": 207.8,
+        "USD": 1429.0,
+        "HKD": 183.2
+      },
+      {
+        "date": "2026-01-07",
+        "displayMonth": null,
+        "CNY": 207.2,
+        "USD": 1428.5,
+        "HKD": 183.0
+      },
+      {
+        "date": "2026-01-31",
+        "displayMonth": null,
+        "CNY": 205.46,
+        "USD": 1427.0,
+        "HKD": 182.81
+      }
     ],
     "rateRanges": [
       {
@@ -1014,18 +1262,18 @@
         "avg": 209.15,
         "startRate": 204.76,
         "endRate": 205.46,
-        "change": 0.70,
+        "change": 0.7,
         "changePercent": 0.34
       },
       {
         "currency": "USD",
         "currencyName": "달러",
-        "min": 1427.00,
-        "max": 1477.50,
+        "min": 1427.0,
+        "max": 1477.5,
         "avg": 1460.17,
-        "startRate": 1434.90,
-        "endRate": 1427.00,
-        "change": -7.90,
+        "startRate": 1434.9,
+        "endRate": 1427.0,
+        "change": -7.9,
         "changePercent": -0.55
       },
       {
@@ -1036,7 +1284,7 @@
         "avg": 186.77,
         "startRate": 184.41,
         "endRate": 182.81,
-        "change": -1.60,
+        "change": -1.6,
         "changePercent": -0.87
       },
       {
@@ -1055,7 +1303,7 @@
         "currencyName": "엔화",
         "min": 9.1763,
         "max": 9.5809,
-        "avg": 9.3880,
+        "avg": 9.388,
         "startRate": 9.1763,
         "endRate": 9.3289,
         "change": 0.1526,
@@ -1118,8 +1366,8 @@
         "fxAmount": 1,
         "bookAmountKRW": 45,
         "settlementAmountKRW": 45,
-        "bookRate": 44.80,
-        "settlementRate": 44.80,
+        "bookRate": 44.8,
+        "settlementRate": 44.8,
         "fxGainLoss": 0,
         "count": 1
       },
@@ -1158,7 +1406,7 @@
         "bookAmountKRW": 4567965859,
         "valuationAmountKRW": 4520926005,
         "bookRate": 1441.8478,
-        "endRate": 1427.00,
+        "endRate": 1427.0,
         "valuationGainLoss": -47039854,
         "rateVerified": true,
         "count": 786
@@ -1209,8 +1457,8 @@
         "fxBalance": 144956995,
         "bookAmountKRW": 6494073296,
         "valuationAmountKRW": 6494073296,
-        "bookRate": 44.80,
-        "endRate": 44.80,
+        "bookRate": 44.8,
+        "endRate": 44.8,
         "valuationGainLoss": 0,
         "rateVerified": false,
         "count": 2
@@ -1235,7 +1483,7 @@
         "fxBalance": 3666,
         "bookAmountKRW": 1330998,
         "valuationAmountKRW": 1331688,
-        "bookRate": 363.00,
+        "bookRate": 363.0,
         "endRate": 363.34,
         "valuationGainLoss": 690,
         "rateVerified": true,
@@ -1262,7 +1510,7 @@
         "bookAmountKRW": -69310345801,
         "valuationAmountKRW": -68240604201,
         "bookRate": 1449.3697,
-        "endRate": 1427.00,
+        "endRate": 1427.0,
         "valuationGainLoss": 1069741599,
         "rateVerified": true,
         "count": 702
@@ -1301,7 +1549,7 @@
         "bookAmountKRW": 98437508059,
         "valuationAmountKRW": 98970962055,
         "bookRate": 1419.31,
-        "endRate": 1427.00,
+        "endRate": 1427.0,
         "valuationGainLoss": 533453996,
         "rateVerified": true,
         "count": 1
