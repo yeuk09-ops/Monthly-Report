@@ -141,13 +141,14 @@ export default function IncomeStatementPage() {
               </TableRow>
               {incomeStatement.revenue.map((item: any, idx) => {
                 const isRateRow = item.label === '할인율 (국내)' || item.label === '출고율 (수출)';
+                const isActualSales = item.label === '실판매출(V-)';
                 return (
-                <TableRow key={`rev-${idx}`} className={`border-b border-slate-100 hover:bg-slate-50/50 transition-colors ${isRateRow ? 'bg-slate-50/30' : ''}`}>
-                  <TableCell className={`${idx <= 2 ? 'pl-6 font-medium text-slate-800' : 'pl-10 text-slate-600'} ${isRateRow ? 'text-slate-500 italic' : ''}`}>{item.label}</TableCell>
-                  <TableCell className={`text-right font-medium ${isRateRow ? 'text-slate-500' : 'text-slate-800'}`}>
+                <TableRow key={`rev-${idx}`} className={`border-b border-slate-100 hover:bg-slate-50/50 transition-colors ${isRateRow ? 'bg-slate-50/30' : ''} ${isActualSales ? 'bg-yellow-100/80' : ''}`}>
+                  <TableCell className={`${idx <= 2 ? 'pl-6 font-medium text-slate-800' : 'pl-10 text-slate-600'} ${isRateRow ? 'text-slate-500 italic' : ''} ${isActualSales ? 'font-bold text-slate-900' : ''}`}>{item.label}</TableCell>
+                  <TableCell className={`text-right ${isRateRow ? 'text-slate-500' : ''} ${isActualSales ? 'font-bold text-slate-900' : 'font-medium text-slate-800'}`}>
                     {item.isPercentage ? `${item.current.toFixed(1)}%` : formatNumber(item.current)}
                   </TableCell>
-                  <TableCell className={`text-right ${isRateRow ? 'text-slate-400' : 'text-slate-500'}`}>
+                  <TableCell className={`text-right ${isRateRow ? 'text-slate-400' : ''} ${isActualSales ? 'font-semibold text-slate-700' : 'text-slate-500'}`}>
                     {item.isPercentage ? `${item.previous.toFixed(1)}%` : formatNumber(item.previous)}
                   </TableCell>
                   <TableCell className={`text-right font-medium ${isRateRow ? 'text-slate-500' : getChangeColor(item.change, item.label === '할인율 (국내)')}`}>
@@ -167,14 +168,16 @@ export default function IncomeStatementPage() {
               <TableRow className="bg-red-50/50 border-0">
                 <TableCell colSpan={5} className="font-semibold text-red-700 py-2">비용</TableCell>
               </TableRow>
-              {incomeStatement.costs.map((item: any, idx) => (
-                <TableRow key={`cost-${idx}`} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                  <TableCell className={`${idx < 3 ? 'pl-6 font-medium text-slate-800' : 'pl-10 text-slate-600'}`}>
+              {incomeStatement.costs.map((item: any, idx) => {
+                const isGrossProfit = item.label === '매출총이익';
+                return (
+                <TableRow key={`cost-${idx}`} className={`border-b border-slate-100 hover:bg-slate-50/50 transition-colors ${isGrossProfit ? 'bg-sky-100/60' : ''}`}>
+                  <TableCell className={`${idx < 3 ? 'pl-6 font-medium text-slate-800' : 'pl-10 text-slate-600'} ${isGrossProfit ? 'font-bold text-slate-900' : ''}`}>
                     {item.label}
                     {item.note && <span className="text-xs text-amber-600 ml-2">({item.note})</span>}
                   </TableCell>
-                  <TableCell className="text-right font-medium text-slate-800">{formatNumber(item.current)}</TableCell>
-                  <TableCell className="text-right text-slate-500">{formatNumber(item.previous)}</TableCell>
+                  <TableCell className={`text-right ${isGrossProfit ? 'font-bold text-slate-900' : 'font-medium text-slate-800'}`}>{formatNumber(item.current)}</TableCell>
+                  <TableCell className={`text-right ${isGrossProfit ? 'font-semibold text-slate-700' : 'text-slate-500'}`}>{formatNumber(item.previous)}</TableCell>
                   <TableCell className={`text-right font-medium ${getChangeColor(item.change, true)}`}>
                     {item.change > 0 ? '+' : ''}{formatNumber(item.change)}
                   </TableCell>
@@ -185,7 +188,8 @@ export default function IncomeStatementPage() {
                     {item.ratio !== undefined ? `${item.ratio.toFixed(1)}%` : '-'}
                   </TableCell>
                 </TableRow>
-              ))}
+              );
+              })}
 
               {/* 매출총이익 */}
               {incomeStatement.grossProfit && (
@@ -216,7 +220,7 @@ export default function IncomeStatementPage() {
                   )}
                 </TableCell>
                 <TableCell className="text-right font-bold text-blue-800 text-lg">{formatNumber(incomeStatement.operatingProfit.current)}</TableCell>
-                <TableCell className="text-right text-slate-500 font-medium">{formatNumber(incomeStatement.operatingProfit.previous)}</TableCell>
+                <TableCell className="text-right font-bold text-slate-700">{formatNumber(incomeStatement.operatingProfit.previous)}</TableCell>
                 <TableCell className="text-right font-bold text-emerald-600">
                   {incomeStatement.operatingProfit.change > 0 ? '+' : ''}{formatNumber(incomeStatement.operatingProfit.change)}
                 </TableCell>
