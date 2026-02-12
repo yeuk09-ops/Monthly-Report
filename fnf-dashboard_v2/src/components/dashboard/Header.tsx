@@ -16,6 +16,7 @@ const navItems = [
   { href: '/', label: '경영요약' },
   { href: '/balance-sheet', label: '재무상태표' },
   { href: '/income-statement', label: '손익계산서' },
+  { href: '/fx-report', label: '외환리포트' },
 ];
 
 export function Header() {

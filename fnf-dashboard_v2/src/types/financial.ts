@@ -214,6 +214,109 @@ export interface Ratios {
   };
 }
 
+// 외환 데이터 타입
+export interface FXRateRange {
+  currency: string;
+  currencyName: string;
+  min: number;
+  max: number;
+  avg: number;
+  startRate: number; // 월초 환율
+  endRate: number;   // 월말 환율
+  change: number;
+  changePercent: number;
+}
+
+export interface FXPosition {
+  currency: string;
+  currencyName: string;
+  receivableFX: number;      // 채권 외화금액
+  receivableKRW: number;     // 채권 원화금액 (억원)
+  payableFX: number;         // 채무 외화금액
+  payableKRW: number;        // 채무 원화금액 (억원)
+  depositFX?: number;        // 예금 외화금액
+  depositKRW?: number;       // 예금 원화금액 (억원)
+  netFX: number;             // 순포지션 외화
+  netKRW: number;            // 순포지션 원화 (억원)
+  endRate: number;           // 기말 환율
+  currentRate: number;       // 현재 환율 (조회시점)
+  rateChange: number;        // 환율 변동
+  rateChangePercent: number; // 환율 변동률
+}
+
+export interface FXSensitivity {
+  currency: string;
+  currencyName: string;
+  netFX: number;             // 순포지션 외화
+  baseRate: number;          // 기준 환율
+  baseKRW: number;           // 기준 원화금액 (억원)
+  plus5PercentRate: number;  // +5% 환율
+  plus5PercentKRW: number;   // +5% 원화금액 (억원)
+  plus5PercentImpact: number; // +5% 평가손익 (억원)
+  minus5PercentRate: number;  // -5% 환율
+  minus5PercentKRW: number;   // -5% 원화금액 (억원)
+  minus5PercentImpact: number; // -5% 평가손익 (억원)
+}
+
+export interface FXRateTrend {
+  date: string;              // YYYY-MM-DD
+  displayMonth?: string;     // 차트 표시용 (MM월)
+  CNY?: number;
+  USD?: number;
+  HKD?: number;
+  EUR?: number;
+  JPY?: number;
+}
+
+export interface FXTransaction {
+  type: 'receivable' | 'payable';
+  currency: string;
+  currencyName: string;
+  fxAmount: number;          // 외화 금액
+  bookAmountKRW: number;     // 장부 금액 (KRW)
+  settlementAmountKRW: number; // 결제 금액 (KRW)
+  bookRate: number;          // 장부 환율
+  settlementRate: number;    // 결제 환율
+  fxGainLoss: number;        // 외환차손익 (실현)
+  count: number;             // 거래 건수
+}
+
+export interface FXValuation {
+  type: 'receivable' | 'payable';
+  currency: string;
+  currencyName: string;
+  fxBalance: number;         // 외화 잔액
+  bookAmountKRW: number;     // 장부 금액 (KRW)
+  valuationAmountKRW: number; // 평가 금액 (KRW)
+  bookRate: number;          // 장부 환율
+  endRate: number;           // 기말 환율
+  valuationGainLoss: number; // 외화평가손익 (미실현)
+  rateVerified: boolean;     // 장부환율 검증 여부 (시장 범위 내)
+  count: number;             // 잔액 건수
+}
+
+export interface FXSummary {
+  transactionGainLoss: number;  // 외환차손익 합계 (실현)
+  valuationGainLoss: number;    // 외화평가손익 합계 (미실현)
+  totalGainLoss: number;        // 총 외환손익
+  receivableTransaction: number; // 채권 거래 손익
+  payableTransaction: number;    // 채무 거래 손익
+  receivableValuation: number;   // 채권 평가 손익
+  payableValuation: number;      // 채무 평가 손익
+}
+
+export interface FXReport {
+  summary: FXSummary;
+  positions: FXPosition[];        // 외화 포지션 현황
+  rateRanges: FXRateRange[];      // 월간 환율 범위
+  rateTrends: FXRateTrend[];      // 12개월 환율 추세
+  sensitivity: FXSensitivity[];   // 민감도 분석 (±5%)
+  transactions: FXTransaction[];  // 거래 외환손익 (실현)
+  valuations: FXValuation[];      // 평가 외화손익 (미실현)
+  insights: string[];             // AI 인사이트
+  warnings: string[];             // 주의사항
+}
+
 // 전체 월별 리포트 데이터
 export interface MonthlyReportData {
   meta: ReportMeta;
@@ -229,4 +332,5 @@ export interface MonthlyReportData {
   unifiedInsights?: UnifiedInsights;
   annualized?: AnnualizedData;
   ratios?: Ratios;
+  fxReport?: FXReport;
 }
