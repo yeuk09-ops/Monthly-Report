@@ -282,7 +282,7 @@ export interface FXTransaction {
 }
 
 export interface FXValuation {
-  type: 'receivable' | 'payable';
+  type: 'receivable' | 'payable' | 'deposit';
   currency: string;
   currencyName: string;
   fxBalance: number;         // 외화 잔액
